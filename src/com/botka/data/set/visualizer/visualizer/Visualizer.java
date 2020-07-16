@@ -10,21 +10,27 @@
  */
 package com.botka.data.set.visualizer.visualizer;
 
+import com.botka.data.set.visualizer.render.engine.Render;
+
 /**
  * <insert class description here>
  *
  * @author Jake Botka
  *
  */
-public abstract class Visualizer
+public abstract class Visualizer implements Render
 {
+	
 
 	/**
 	 * 
 	 */
 	public Visualizer()
 	{
-		// TODO Auto-generated constructor stub
+		
 	}
+	
+	public abstract void init();
+	
 
 }
