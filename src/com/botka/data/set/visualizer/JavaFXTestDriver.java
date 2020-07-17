@@ -48,8 +48,11 @@ public class JavaFXTestDriver extends Application
 		Group root = new Group();
 		root.getChildren().add(canvas);
 		scene = new Scene(root);
-		
-		Visualizer visual = new JavaFXVisualizer(stage, scene, canvas );
+		DataSet<Integer> dataSet = new DataSet(0);
+		dataSet.add(4);
+		dataSet.add(2);
+		dataSet.add(100);
+		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas );
 		
 		RenderEngine engine = new RenderEngine(visual, 30);
 		
@@ -58,7 +61,7 @@ public class JavaFXTestDriver extends Application
 		stage.setScene(scene);
 		stage.show();
 		
-		objectSortTest();
+		//objectSortTest();
 	}
 	
 	public static void objectSortTest()
@@ -67,7 +70,9 @@ public class JavaFXTestDriver extends Application
 		arr[0] = 3;
 		arr[1] = -2;
 		Integer max = ArraySorter.<Integer>findMaxinArray(arr);
+		Double d = new Double(3.5);
 		System.out.println(max.intValue());
+		System.out.println(d.toString());
 	}
 
 }

@@ -10,6 +10,7 @@
  */
 package com.botka.data.set.visualizer.visualizer;
 
+import com.botka.data.set.visualizer.DataSet;
 import com.botka.data.set.visualizer.render.engine.Render;
 
 /**
@@ -22,12 +23,20 @@ public abstract class Visualizer implements Render
 {
 	
 
+	private DataSet<?> mDataset;
+	
 	/**
 	 * 
 	 */
-	public Visualizer()
+	public Visualizer(DataSet<?> dataSet)
 	{
-		
+		this.mDataset = dataSet;
+	}
+	
+	
+	public DataSet getWorkingDataSet()
+	{
+		return this.mDataset;
 	}
 	
 	public abstract void init();

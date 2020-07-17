@@ -8,6 +8,10 @@
  */
 package com.botka.data.set.visualizer.visualizer;
 
+import java.util.Scanner;
+
+import com.botka.data.set.visualizer.DataSet;
+
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,16 +30,20 @@ public class JavaFXVisualizer extends Visualizer
 	private Scene mScene;
 	private Canvas mCanvas;
 	private GraphicsContext mContext;
-	private double mGroundX, mGroundY, mScaleXFactor, mScaleYFactor;
+	private double mGroundX, mGroundY,  mScaleXFactor, mScaleYFactor;
 	private boolean mReady;
+	
+	public final double MAX_SCALE_X = 50.0;
+	public final double MAX_SCLAE_Y = 100.0;
 	
 
 	/**
 	 * 
 	 * @param stage
 	 */
-	public JavaFXVisualizer(Stage stage)
+	public JavaFXVisualizer(DataSet<?> dataSet, Stage stage)
 	{
+		super(dataSet);
 		this.mStage = stage;
 		
 	}
@@ -45,9 +53,9 @@ public class JavaFXVisualizer extends Visualizer
 	 * @param stage
 	 * @param scene
 	 */
-	public JavaFXVisualizer(Stage stage, Scene scene)
+	public JavaFXVisualizer(DataSet<?> dataSet,Stage stage, Scene scene)
 	{
-		this(stage);
+		this(dataSet, stage);
 		this.mScene = scene;
 		this.mStage.setScene(this.mScene);
 	}
@@ -59,14 +67,12 @@ public class JavaFXVisualizer extends Visualizer
 	 * @param scene
 	 * @param canvas
 	 */
-	public JavaFXVisualizer(Stage stage, Scene scene, Canvas canvas)
+	public JavaFXVisualizer(DataSet<?> dataSet,Stage stage, Scene scene, Canvas canvas)
 	{
-		this(stage,scene);
+		this(dataSet, stage,scene);
 		this.mCanvas = canvas;
 		// if canvas null then assign context null otherwise call canvas getContext method;
-		this.mContext = this.mCanvas != null ? this.mCanvas.getGraphicsContext2D() : null;
-		this.mGroundX = this.mCanvas != null ? 0 : -1;
-		this.mGroundY = this.mCanvas != null ? (int) this.mCanvas.getHeight() : -1;
+		
 	
 		
 	}
@@ -77,9 +83,36 @@ public class JavaFXVisualizer extends Visualizer
 	@Override
 	public void init()
 	{
+		this.mContext = this.mCanvas != null ? this.mCanvas.getGraphicsContext2D() : null;
+		this.mGroundX = this.mCanvas != null ? 0 : -1;
+		this.mGroundY = this.mCanvas != null ? (int) this.mCanvas.getHeight() : -1;
 		this.mReady = this.checkIfReady();
 	
+		DataSet set = super.getWorkingDataSet();
+		if(set != null)
+		{
+			if (set.isNumberArray())
+			{
+				double max = set.parseValue(set.getMax().toString().toCharArray());
+				double min = set.parseValue(set.getMin().toString().toCharArray());
+				
+				
+				this.mScaleYFactor =  this.mCanvas.getHeight() / ((max - min)) ;
+				this.mScaleXFactor = this.mCanvas.getWidth() / set.size();
+				if (this.mScaleXFactor > MAX_SCALE_X)
+					this.mScaleXFactor = MAX_SCALE_X;
+				
+				while (this.mCanvas.getHeight() - this.mScaleYFactor * max < 0) //the value can not be represented in the current scale without cutting off screen
+				{
+					System.out.println("Scale factor was to large from the larges value at : " + this.mScaleYFactor);
+					this.mScaleYFactor /=  2;
+				}
+			}
+			
+		}
 	}
+	
+	
 	
 	/**
 	 * 
@@ -116,9 +149,36 @@ public class JavaFXVisualizer extends Visualizer
 	{
 		if (this.mReady)
 		{
-			System.out.println(this.mCanvas.getHeight());
-			this.mContext.setFill(Color.BLACK);
-			this.mContext.fillRect(this.mGroundX,this.mGroundY - 100, 100, 100);
+			DataSet set = super.getWorkingDataSet();
+			double x = this.mGroundX;
+			for (Object o : set.toArray())
+			{
+				x += this.mScaleXFactor;
+				double y = this.mGroundY;
+				double value = Double.NaN;
+				if (set.isNumberArray())
+				{
+					value = set.parseValue(o.toString().toCharArray());
+					y-= value * this.mScaleYFactor;
+					
+					if (y < 0) // being to large
+						
+						
+					System.out.println(value);
+				}
+				else
+				{
+				
+				}
+				
+				
+				System.out.println(y);
+				this.mContext.setFill(Color.BLACK);
+				this.mContext.setStroke(Color.WHITESMOKE);
+				this.mContext.setLineWidth(3);
+				this.mContext.fillRect(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y);
+				this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y);
+			}
 		}
 		else
 		{
