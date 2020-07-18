@@ -8,6 +8,7 @@
  */
 package com.botka.data.set.visualizer.visualizer;
 
+import java.util.Iterator;
 import java.util.Scanner;
 
 import com.botka.data.set.visualizer.DataSet;
@@ -33,6 +34,9 @@ public class JavaFXVisualizer extends Visualizer
 	private double mGroundX, mGroundY,  mScaleXFactor, mScaleYFactor;
 	private boolean mReady;
 	
+	private final Color DEFAULT_BLOCK_COLOR = Color.GREY;
+	private final Color DEFAULT_BLOCK_STROKE_COLOR = Color.WHITESMOKE;
+	private final Color DEFUALT_POINTER_BLOCK_COLOR = Color.BLUE;
 	public final double MAX_SCALE_X = 50.0;
 	public final double MAX_SCLAE_Y = 100.0;
 	
@@ -87,6 +91,10 @@ public class JavaFXVisualizer extends Visualizer
 		this.mGroundX = this.mCanvas != null ? 0 : -1;
 		this.mGroundY = this.mCanvas != null ? (int) this.mCanvas.getHeight() : -1;
 		this.mReady = this.checkIfReady();
+		if(mReady)
+		{
+			this.initCanvasSettings();
+		}
 	
 		DataSet set = super.getWorkingDataSet();
 		if(set != null)
@@ -112,11 +120,19 @@ public class JavaFXVisualizer extends Visualizer
 		}
 	}
 	
+	private void initCanvasSettings()
+	{
+		
+		this.mContext.setFill(Color.GREY);
+		this.mContext.setStroke(Color.WHITESMOKE);
+		this.mContext.setLineWidth(3);
+	}
+	
 	
 	
 	/**
-	 * 
-	 * @return
+	 * Checks whether the visualizer has all the neccassary data non nulled to operate.
+	 * @return boolean
 	 */
 	public boolean checkIfReady()
 	{
@@ -149,35 +165,37 @@ public class JavaFXVisualizer extends Visualizer
 	{
 		if (this.mReady)
 		{
-			DataSet set = super.getWorkingDataSet();
-			double x = this.mGroundX;
-			for (Object o : set.toArray())
+			if (this.mStage.isShowing())
 			{
-				x += this.mScaleXFactor;
-				double y = this.mGroundY;
-				double value = Double.NaN;
-				if (set.isNumberArray())
+				
+				DataSet set = super.getWorkingDataSet();
+				
+				double x = this.mGroundX;
+				x -= this.mScaleXFactor; // forces firt element to zero
+				Iterator iterator = set.iterator(); // allows for set modification during iteration
+				for (int i =0 ; i < set.size(); i++)
 				{
-					value = set.parseValue(o.toString().toCharArray());
-					y-= value * this.mScaleYFactor;
-					
-					if (y < 0) // being to large
+					if (iterator.hasNext())
+					{
+						Object o = iterator.next();
+						x = i* this.mScaleXFactor;
+						double y = this.mGroundY;
+						double value = Double.NaN;
+						if (set.isNumberArray())
+						{
+							value = set.parseValue(o.toString().toCharArray());
+							y-= value * this.mScaleYFactor;
+						}
+						else // if not a number
+							y = i * this.mScaleYFactor;
 						
-						
-					System.out.println(value);
-				}
-				else
-				{
+						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null);
+						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y);
+					}
 				
 				}
 				
-				
-				System.out.println(y);
-				this.mContext.setFill(Color.BLACK);
-				this.mContext.setStroke(Color.WHITESMOKE);
-				this.mContext.setLineWidth(3);
-				this.mContext.fillRect(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y);
-				this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y);
+				this.drawPointer(set); // draws the position of the pointer
 			}
 		}
 		else
@@ -187,9 +205,101 @@ public class JavaFXVisualizer extends Visualizer
 		
 	}
 	
-	public void renderData()
+	
+
+	/**
+	 * @param set
+	 */
+	@Override
+	public void drawPointer(DataSet set)
 	{
 		
+		double value = set.parseValue(set.get(set.getPointerInfo().getPointerPosition()).toString().toCharArray());
+		double x = (set.getPointerInfo().getPointerPosition() * this.mScaleXFactor);
+	
+		double y = this.mGroundY - this.mScaleYFactor * value;
+		double h = this.mCanvas.getHeight() - y;
+		System.out.println("h" + h);
+		this.mContext.setFill(DEFUALT_POINTER_BLOCK_COLOR);
+		this.mContext.clearRect(x,y, this.mScaleXFactor, h);
+		this.mContext.fillRect(x,y, this.mScaleXFactor, h);
+		this.mContext.setFill(DEFAULT_BLOCK_COLOR);
+		
+	}
+
+
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param color
+	 * @param previousColor
+	 */
+	public void drawAt(double x, double y, double w, double h, Color color, Color previousColor)
+	{
+		if (color == null) // error by programmer
+			color = DEFAULT_BLOCK_COLOR;
+		
+		this.mContext.setFill(color);
+		this.mContext.fillRect(x, y, w, h);
+		
+		
+		if (previousColor != null) // does not want to revert back to color
+			this.mContext.setFill(previousColor);
+		
+	}
+	
+	/**
+	 * called when a modification to the list has occurred.
+	 * Depending on the values of the parameters interpretation can be made about what was modified.
+	 * Data moved, replaced , add, ect.
+	 * @param oldObj
+	 * @param newObj
+	 * @param oldIndex
+	 * @param newIndex;
+	 */
+	@Override
+	public void onDataChanged(Object oldObj, Object newObj, int oldIndex,
+			int newIndex)
+	{
+		if (oldObj == null && newObj != null) // new data added
+		{
+			if (oldIndex + 1 == newIndex) // data added
+			{
+				// add implementation
+			}
+			
+		}
+		else if (oldObj != null && newObj == null) // data removed
+		{
+			
+		}
+		
+		//TODO : Finish method
+		
+	}
+
+	@Override
+	public void onDataAdded(Object newObj, int index, boolean sizeIncreased)
+	{
+		//TODO : Finish method
+		
+	}
+
+	@Override
+	public void onDataRemoved(Object oldObj, int index, boolean sizeDecreased)
+	{
+		
+		//TODO : Finish method
+	}
+
+	@Override
+	public void onDataMoved(Object obj, int oldIndex, int newIndex)
+	{
+		
+		//TODO : Finish method
 	}
 
 }

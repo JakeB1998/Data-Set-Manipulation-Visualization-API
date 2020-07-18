@@ -24,7 +24,7 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	private boolean mNumber;
 	private T mMax;
 	private T mMin;
-	
+	private DataSetItterator mDataSetIteratorInfo;
 	/**
 	 * 
 	 */
@@ -37,6 +37,7 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 		this.mMin = null;
 		this.mNumber = this.isNumberArray();
 		System.out.println(this.mNumber);
+		this.mDataSetIteratorInfo = new DataSetItterator(super.iterator());
 		
 		
 	}
@@ -195,6 +196,11 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 		return this.mMin;
 	}
 	
+	
+	public DataSetItterator getPointerInfo()
+	{
+		return this.mDataSetIteratorInfo;
+	}
 
 
 }
