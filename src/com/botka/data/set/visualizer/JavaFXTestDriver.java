@@ -60,6 +60,7 @@ public class JavaFXTestDriver extends Application
 		engine.init();
 		stage.setScene(scene);
 		stage.show();
+		visual.onRender();
 		
 		//objectSortTest();
 	}
