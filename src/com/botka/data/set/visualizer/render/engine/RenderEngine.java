@@ -8,6 +8,7 @@
  */
 package com.botka.data.set.visualizer.render.engine;
 
+import com.botka.data.set.visualizer.Sort;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
 
 /**
@@ -24,6 +25,7 @@ public final class RenderEngine
 	private final int DEFAULT_CYCLES_PER_SECOND = 30;
 	private Render mRenderCallback;
 	private int mCyclesPerSecond;
+	private Sort mSortingAlgorithm;
 	
 	/**
 	 * @paramrenderCallback
@@ -56,7 +58,9 @@ public final class RenderEngine
 		
 	}
 	
-	
+	/**
+	 * inits object instance
+	 */
 	public void init()
 	{
 		 // if null then assign default otherwise keep same
@@ -64,6 +68,14 @@ public final class RenderEngine
 		
 		this.render();
 		
+	}
+	
+	/**
+	 * Called to manualy call a rendering operation
+	 */
+	public void onStep()
+	{
+		this.render();
 	}
 	
 	/**
