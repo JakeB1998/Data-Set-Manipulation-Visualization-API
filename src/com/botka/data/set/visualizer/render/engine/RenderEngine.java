@@ -8,7 +8,7 @@
  */
 package com.botka.data.set.visualizer.render.engine;
 
-import com.botka.data.set.visualizer.Sort;
+import com.botka.data.set.visualizer.sort.Sort;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
 
 /**
@@ -23,6 +23,7 @@ public final class RenderEngine
 {
 
 	private final int DEFAULT_CYCLES_PER_SECOND = 30;
+	private AsyncOperation mThreadRunner;
 	private Render mRenderCallback;
 	private int mCyclesPerSecond;
 	private Sort mSortingAlgorithm;
@@ -87,6 +88,19 @@ public final class RenderEngine
 		{
 			this.mRenderCallback.onRender();
 		}
+	}
+	
+	private class AsyncOperation implements Runnable
+	{
+
+		private boolean mRunning;
+		@Override
+		public void run()
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 	
 

@@ -11,6 +11,7 @@ package com.botka.data.set.visualizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import com.botka.data.set.visualizer.render.engine.RenderEngine;
 import com.botka.data.set.visualizer.visualizer.JavaFXVisualizer;
@@ -23,7 +24,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
 
 /**
- * <insert class description here>
+ * Test driver with main method for the Javafx test implementation
  *
  * @author Jake Botka
  *
@@ -48,10 +49,13 @@ public class JavaFXTestDriver extends Application
 		Group root = new Group();
 		root.getChildren().add(canvas);
 		scene = new Scene(root);
-		DataSet<Integer> dataSet = new DataSet(0);
-		dataSet.add(4);
-		dataSet.add(2);
-		dataSet.add(100);
+		DataSet<Double> dataSet = new DataSet(0);
+		
+		Random ran = new Random();
+		for (int i = 0; i < 1000; i++)
+		{
+			dataSet.add(ran.nextDouble() * 100);
+		}
 		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas );
 		
 		RenderEngine engine = new RenderEngine(visual, 30);
@@ -60,6 +64,8 @@ public class JavaFXTestDriver extends Application
 		engine.init();
 		stage.setScene(scene);
 		stage.show();
+		visual.onRender();
+		dataSet.getPointerInfo().setPointerPosition(2);
 		visual.onRender();
 		
 		//objectSortTest();

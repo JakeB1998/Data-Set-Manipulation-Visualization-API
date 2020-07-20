@@ -8,6 +8,7 @@
  */
 package com.botka.data.set.visualizer;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 
 /**
@@ -24,37 +25,44 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	private boolean mNumber;
 	private T mMax;
 	private T mMin;
-	private DataSetItterator mDataSetIteratorInfo;
+	private DataSetPointer mDataSetIteratorInfo;
 	/**
-	 * 
+	 * Main constructor
+	 * @param initial size of the dynammic array
 	 */
 	@SuppressWarnings("unchecked")
 	public DataSet(int size)
 	{
+		
 		super(size);
+		
 		this.mArr = new Object[size];
-		this.mMax = null;
-		this.mMin = null;
+		this.mMax = null; // default
+		this.mMin = null; // default
 		this.mNumber = this.isNumberArray();
-		System.out.println(this.mNumber);
-		this.mDataSetIteratorInfo = new DataSetItterator(super.iterator());
+		this.mDataSetIteratorInfo = new DataSetPointer();
 		
 		
 	}
 	
 	/**
-	 * 
-	 * @param arr
+	 * Constructor that accepts an array of data to be comppied into the dynamic arraylist
+	 * @param array with the type of T
 	 */
 	public DataSet(T[] arr)
 	{
-		super(arr.length);
+		this(arr.length);
+		
 		for (int i = 0; i < arr.length; i++)
 		{
 			super.add(arr[i]);
 		}
 	}
 	
+	/**
+	 * Determines if the entire generic array is type safed with numerical values.
+	 * @return true if the entire array is filled with numbers
+	 */
 	public boolean isNumberArray()
 	{
 		
@@ -70,8 +78,15 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 		return true;
 	}
 	
-	public boolean isNumber(T element)
+	/**
+	 * This method determines wether or not an object is an instance of the Number class defining wether this object has numerical value that can be read.
+	 * @param element
+	 * @return true if object is a nuber otherwise false
+	 */
+	public boolean isNumber(Object element)
 	{
+		
+		
 		if (element instanceof Number)
 			return true;
 		return false;
@@ -112,6 +127,9 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 		return (T[])arr;
 	}
 	
+	/**
+	 * @return true if the leement was added to array otherwise false
+	 */
 	@Override
 	public boolean add(T element)
 	{
@@ -133,7 +151,7 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	
 	/**
 	 * 
-	 * @return T
+	 * @return the maximum value of the array
 	 */
 	public T getMax()
 	{
@@ -149,55 +167,38 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	public double getValue(T value)
 	{
 		
-		return this.parseValue(value.toString().toCharArray()); // this determines the value of paramter
+		return this.parseValue(value); // this determines the value of paramter
 	}
 	
 	/**
-	 * parcases value
+	 * parses value
 	 * @param arr
 	 * @return
 	 */
-	public double parseValue(char[] arr)
+	public double parseValue(Object value)
 	{
 		double x = Double.NaN;
-		if (arr != null)
+		if (this.isNumber(value))
 		{
-			boolean parcable = true;
-			for (int i =0; i < arr.length; i++)
-			{
-				if (Character.isDigit(arr[i]) == false)
-				{
-					parcable = false;
-					break;
-				}
-			}
-			
-			if (parcable)
-			{
-				try
-				{
-					x = Double.parseDouble(new String(arr));
-				}
-				catch(Exception e)
-				{
-					
-				}
-				
-			}
+			Number number = (Number) value;
+			return number.doubleValue();
 		}
 		return x;
 	}
 	/**
 	 * 
-	 * @return T
+	 * @return the minimum value of the array
 	 */
 	public T getMin()
 	{
 		return this.mMin;
 	}
 	
-	
-	public DataSetItterator getPointerInfo()
+	/**
+	 * 
+	 * @return the pointer of this dataset wrapped into an object
+	 */
+	public DataSetPointer getPointerInfo()
 	{
 		return this.mDataSetIteratorInfo;
 	}

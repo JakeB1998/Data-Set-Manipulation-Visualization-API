@@ -40,7 +40,7 @@ public abstract class Visualizer implements Render
 	}
 	
 	public abstract void init();
-	public abstract void drawPointer(DataSet set);
+	public abstract void drawPointer(DataSet<?> set);
 	public abstract void onDataChanged(Object oldObj, Object newObj, int oldIndex, int newIndex); // multiple interperations of parameters
 	public abstract void onDataAdded(Object newObj, int index, boolean sizeIncreased);
 	public abstract void onDataRemoved(Object oldObj, int index, boolean sizeDecreased);

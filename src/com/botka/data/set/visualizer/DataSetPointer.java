@@ -16,7 +16,7 @@ import java.util.Iterator;
  * @author Jake Botka
  *
  */
-public class DataSetItterator
+public class DataSetPointer
 {
 
 	private int mPointerPosition;
@@ -24,7 +24,7 @@ public class DataSetItterator
 	/**
 	 * 
 	 */
-	public DataSetItterator(Iterator iterator)
+	public DataSetPointer()
 	{
 		this.mPointerPosition = 0;
 		// TODO Auto-generated constructor stub
@@ -34,7 +34,7 @@ public class DataSetItterator
 	{
 		this.mPointerPosition++;
 	}
-	
+		
 	
 	public int getPointerPosition()
 	{

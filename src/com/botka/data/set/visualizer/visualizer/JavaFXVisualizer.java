@@ -13,10 +13,12 @@ import java.util.Scanner;
 
 import com.botka.data.set.visualizer.DataSet;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -48,7 +50,10 @@ public class JavaFXVisualizer extends Visualizer
 	public JavaFXVisualizer(DataSet<?> dataSet, Stage stage)
 	{
 		super(dataSet);
+	
+		
 		this.mStage = stage;
+		
 		
 	}
 	
@@ -90,19 +95,27 @@ public class JavaFXVisualizer extends Visualizer
 		this.mContext = this.mCanvas != null ? this.mCanvas.getGraphicsContext2D() : null;
 		this.mGroundX = this.mCanvas != null ? 0 : -1;
 		this.mGroundY = this.mCanvas != null ? (int) this.mCanvas.getHeight() : -1;
+		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+		 
 		this.mReady = this.checkIfReady();
 		if(mReady)
 		{
 			this.initCanvasSettings();
+			this.mCanvas.setWidth(screenBounds.getWidth());
+			this.mCanvas.setHeight(screenBounds.getHeight() - 100);
+			//this.mStage.setResizable(false);
+		
+			
 		}
 	
-		DataSet set = super.getWorkingDataSet();
+		DataSet<?> set = super.getWorkingDataSet();
 		if(set != null)
 		{
 			if (set.isNumberArray())
 			{
-				double max = set.parseValue(set.getMax().toString().toCharArray());
-				double min = set.parseValue(set.getMin().toString().toCharArray());
+				
+				double max = set.parseValue(set.getMax());
+				double min = set.parseValue(set.getMin());
 				
 				
 				this.mScaleYFactor =  this.mCanvas.getHeight() / ((max - min)) ;
@@ -120,6 +133,9 @@ public class JavaFXVisualizer extends Visualizer
 		}
 	}
 	
+	/**
+	 * Inits the canvas settings
+	 */
 	private void initCanvasSettings()
 	{
 		
@@ -159,6 +175,7 @@ public class JavaFXVisualizer extends Visualizer
 
 	/**
 	 * Overridden from Interface implementation of superclass
+	 * Called on each frame rendered with this framework implementation of JAVAFX front end frame work
 	 */
 	@Override
 	public void onRender()
@@ -168,11 +185,10 @@ public class JavaFXVisualizer extends Visualizer
 			if (this.mStage.isShowing())
 			{
 				
-				DataSet set = super.getWorkingDataSet();
-				
-				double x = this.mGroundX;
-				x -= this.mScaleXFactor; // forces firt element to zero
-				Iterator iterator = set.iterator(); // allows for set modification during iteration
+			 DataSet<?> set = super.getWorkingDataSet();
+				Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
+				double x = this.mGroundX - this.mScaleXFactor;
+	
 				for (int i =0 ; i < set.size(); i++)
 				{
 					if (iterator.hasNext())
@@ -181,16 +197,16 @@ public class JavaFXVisualizer extends Visualizer
 						x = i* this.mScaleXFactor;
 						double y = this.mGroundY;
 						double value = Double.NaN;
-						if (set.isNumberArray())
+						if (set.isNumber(o))
 						{
-							value = set.parseValue(o.toString().toCharArray());
+							value = set.parseValue(o);
 							y-= value * this.mScaleYFactor;
 						}
 						else // if not a number
 							y = i * this.mScaleYFactor;
 						
-						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null);
-						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y);
+						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
+						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
 					}
 				
 				}
@@ -208,18 +224,19 @@ public class JavaFXVisualizer extends Visualizer
 	
 
 	/**
-	 * @param set
+	 * @param Data set
 	 */
 	@Override
-	public void drawPointer(DataSet set)
+	public void drawPointer(DataSet<?> set)
 	{
 		
-		double value = set.parseValue(set.get(set.getPointerInfo().getPointerPosition()).toString().toCharArray());
+		double value = set.parseValue((Comparable) set.get(set.getPointerInfo().getPointerPosition()));
+		
 		double x = (set.getPointerInfo().getPointerPosition() * this.mScaleXFactor);
 	
 		double y = this.mGroundY - this.mScaleYFactor * value;
 		double h = this.mCanvas.getHeight() - y;
-		System.out.println("h" + h);
+		
 		this.mContext.setFill(DEFUALT_POINTER_BLOCK_COLOR);
 		this.mContext.clearRect(x,y, this.mScaleXFactor, h);
 		this.mContext.fillRect(x,y, this.mScaleXFactor, h);
@@ -229,11 +246,11 @@ public class JavaFXVisualizer extends Visualizer
 
 
 	/**
-	 * 
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param h
+	 * Draws on canvas at specific location with A color deriving from the interface: Paint
+	 * @param xLocation
+	 * @param yLocation
+	 * @param width
+	 * @param height
 	 * @param color
 	 * @param previousColor
 	 */
