@@ -8,9 +8,9 @@
  */
 package com.botka.data.set.visualizer.sort;
 
-import com.botka.data.set.visualizer.DataSet;
-import com.botka.data.set.visualizer.StepResult;
+import com.botka.data.set.visualizer.data.DataSet;
 import com.botka.data.set.visualizer.step.SortStep;
+import com.botka.data.set.visualizer.step.StepResult;
 
 /**
  * A class implementation of a Bubble sort that can be played out slowly by the RenderEngine class.
@@ -30,7 +30,7 @@ public class BubbleSort extends Sort
 	 */
 	public BubbleSort(DataSet set)
 	{
-		super(SORTING_ALGORITHM, set);
+		super(SORTING_ALGORITHM, set,500);
 		
 	}
 
@@ -40,18 +40,26 @@ public class BubbleSort extends Sort
 	@Override
 	public SortStep onSortingStep(int stepCount)
 	{
-		boolean d = true;
 		
-		DataSet set = super.getDataSet();
-		//TODO do sort step here
+		boolean canStep = this.canStep(stepCount);
+		System.out.println(canStep);
+		if (canStep)
+		{
+			DataSet set = super.getDataSet();
+			//TODO do sort step here
+			
+			int index = set.getPointerInfo().getPointerPosition();
+			
+			if (index < set.size())
+				index++;
+				
+			set.getPointerInfo().setPointerPosition(index);
+			return new SortStep(index, stepCount++, !canStep);
+		}
 		
-		int index = set.getPointerInfo().getPointerPosition();
-		index++;
-		if (index < set.size())
-			d = false;
-		set.getPointerInfo().setPointerPosition(index);
+		return new SortStep(super.getDataSet().getPointerInfo().getPointerPosition(), stepCount, true);
 		
-		return new SortStep(index, stepCount++, d);
+		
 
 	}
 
@@ -59,9 +67,9 @@ public class BubbleSort extends Sort
 	 * @return true if can step else false
 	 */
 	@Override
-	public boolean canStep()
+	public boolean canStep(int currentStep)
 	{
-		return false;
+		return currentStep < super.getMaxAmountOfSteps();
 	}
 
 	/**
@@ -70,8 +78,8 @@ public class BubbleSort extends Sort
 	@Override
 	public StepResult onStep(int step)
 	{
-		return (StepResult)this.onSortingStep(step);
-		
+			return (StepResult)this.onSortingStep(step);
+	
 	}
 	
 

@@ -1,4 +1,4 @@
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.step;
 
 /**
  * 
@@ -12,14 +12,16 @@ public abstract class StepResult
 {
 
 	private int mStepCount; //count of steps
+	private boolean mDone;
 	
 	/**
 	 * 
 	 * @param stepCount
 	 */
-	public StepResult(int stepCount)
+	public StepResult(int stepCount,boolean done)
 	{
 		this.setStepCount(stepCount);
+		this.mDone = done;
 	}
 	
 	/**
@@ -29,6 +31,16 @@ public abstract class StepResult
 	public int getStepCount()
 	{
 		return mStepCount;
+	}
+	
+
+	/**
+	 * 
+	 * @return state of the playable operation
+	 */
+	public boolean isDone()
+	{
+		return this.mDone;
 	}
 	
 	/**

@@ -6,7 +6,7 @@
  * Date: Jul 17, 2020
  *
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.data;
 
 import java.util.Stack;
 

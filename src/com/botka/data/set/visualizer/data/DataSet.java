@@ -6,7 +6,7 @@
  * Date: Jul 16, 2020
  *
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.data;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;

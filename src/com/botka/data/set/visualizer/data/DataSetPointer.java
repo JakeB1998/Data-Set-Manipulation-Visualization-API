@@ -6,7 +6,7 @@
  * Date: Jul 18, 2020
  *
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.data;
 
 import java.util.Iterator;
 
@@ -30,7 +30,7 @@ public class DataSetPointer
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void incrementPosition()
+	public synchronized void incrementPosition()
 	{
 		this.mPointerPosition++;
 	}

@@ -8,15 +8,17 @@
  */
 package com.botka.data.set.visualizer.visualizer;
 
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import com.botka.data.set.visualizer.DataSet;
+import com.botka.data.set.visualizer.data.DataSet;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -39,8 +41,14 @@ public class JavaFXVisualizer extends Visualizer
 	private final Color DEFAULT_BLOCK_COLOR = Color.GREY;
 	private final Color DEFAULT_BLOCK_STROKE_COLOR = Color.WHITESMOKE;
 	private final Color DEFUALT_POINTER_BLOCK_COLOR = Color.BLUE;
-	public final double MAX_SCALE_X = 50.0;
-	public final double MAX_SCLAE_Y = 100.0;
+	private final double MAX_SCALE_X = 50.0;
+	private final double MAX_SCLAE_Y = 100.0;
+	private double mTextX;
+	
+	private String mTitle;
+	private String mInfoBox1;
+	private String mInfoBox2;
+	private String mInfoBox3;
 	
 
 	/**
@@ -50,11 +58,7 @@ public class JavaFXVisualizer extends Visualizer
 	public JavaFXVisualizer(DataSet<?> dataSet, Stage stage)
 	{
 		super(dataSet);
-	
-		
 		this.mStage = stage;
-		
-		
 	}
 	
 	/**
@@ -95,8 +99,12 @@ public class JavaFXVisualizer extends Visualizer
 		this.mContext = this.mCanvas != null ? this.mCanvas.getGraphicsContext2D() : null;
 		this.mGroundX = this.mCanvas != null ? 0 : -1;
 		this.mGroundY = this.mCanvas != null ? (int) this.mCanvas.getHeight() : -1;
+		this.setTitle("JavaFX Implementation Data Set Visuliztion");
+		this.setInfoBox1("");
+		this.setInfoBox2("");
+		this.setInfoBox3("");
 		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-		 
+	
 		this.mReady = this.checkIfReady();
 		if(mReady)
 		{
@@ -142,6 +150,8 @@ public class JavaFXVisualizer extends Visualizer
 		this.mContext.setFill(Color.GREY);
 		this.mContext.setStroke(Color.WHITESMOKE);
 		this.mContext.setLineWidth(3);
+		
+		//this.drawTitle();
 	}
 	
 	
@@ -173,6 +183,8 @@ public class JavaFXVisualizer extends Visualizer
 		}
 	}
 
+	DecimalFormat df = new DecimalFormat("0.00##");
+	
 	/**
 	 * Overridden from Interface implementation of superclass
 	 * Called on each frame rendered with this framework implementation of JAVAFX front end frame work
@@ -180,6 +192,7 @@ public class JavaFXVisualizer extends Visualizer
 	@Override
 	public void onRender()
 	{
+		//System.out.println(Thread.currentThread().getName());
 		if (this.mReady)
 		{
 			if (this.mStage.isShowing())
@@ -200,6 +213,8 @@ public class JavaFXVisualizer extends Visualizer
 						if (set.isNumber(o))
 						{
 							value = set.parseValue(o);
+							
+							this.setInfoBox1("Value at Pointer: " + String.valueOf(df.format(value)));
 							y-= value * this.mScaleYFactor;
 						}
 						else // if not a number
@@ -207,6 +222,10 @@ public class JavaFXVisualizer extends Visualizer
 						
 						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
 						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
+						
+						//TODO: Render text;
+						//this.drawUI();
+						
 					}
 				
 				}
@@ -220,6 +239,19 @@ public class JavaFXVisualizer extends Visualizer
 		}
 		
 	}
+	/*
+	 
+	public void drawTitle()
+	{
+		this.mTextX = (double)this.mCanvas.getWidth() - (this.mCanvas.getWidth() * 0.20);
+		this.mContext.fillText(this.getTitle(), this.mTextX, 25);
+		
+	}
+	public void drawUI()
+	{
+		this.mContext.fillText(this.getInfoBox1(), this.mTextX, 200);
+	}
+	*/
 	
 	
 
@@ -229,18 +261,33 @@ public class JavaFXVisualizer extends Visualizer
 	@Override
 	public void drawPointer(DataSet<?> set)
 	{
+		//System.out.println("Drawing pointer");
+		int index = set.getPointerInfo().getPointerPosition();
+		System.out.println(index);
 		
-		double value = set.parseValue((Comparable) set.get(set.getPointerInfo().getPointerPosition()));
 		
-		double x = (set.getPointerInfo().getPointerPosition() * this.mScaleXFactor);
-	
-		double y = this.mGroundY - this.mScaleYFactor * value;
-		double h = this.mCanvas.getHeight() - y;
+		if (index < set.size() && index >= 0)
+		{
+			
+			@SuppressWarnings("rawtypes")
+			double value = set.parseValue((Comparable) set.get(index));
+			
+			double x = (index * this.mScaleXFactor);
 		
-		this.mContext.setFill(DEFUALT_POINTER_BLOCK_COLOR);
-		this.mContext.clearRect(x,y, this.mScaleXFactor, h);
-		this.mContext.fillRect(x,y, this.mScaleXFactor, h);
-		this.mContext.setFill(DEFAULT_BLOCK_COLOR);
+			double y = this.mGroundY - this.mScaleYFactor * value;
+			double h = this.mCanvas.getHeight() - y;
+			System.out.println(x + "," + y + "," + h);
+			this.mContext.setFill(DEFUALT_POINTER_BLOCK_COLOR);
+			this.mContext.clearRect(x,y, this.mScaleXFactor, h);
+			this.mContext.fillRect(x,y, this.mScaleXFactor, h);
+			this.mContext.setFill(DEFAULT_BLOCK_COLOR);
+			
+			
+		}
+		else
+		{
+			System.err.print("Tying to access index out of bounds at index : " + index + " With size: " + set.size());
+		}
 		
 	}
 
@@ -317,6 +364,210 @@ public class JavaFXVisualizer extends Visualizer
 	{
 		
 		//TODO : Finish method
+	}
+
+	/**
+	 * @return the mScaleXFactor
+	 */
+	public double getScaleXFactor()
+	{
+		return mScaleXFactor;
+	}
+
+	/**
+	 * @param mScaleXFactor the mScaleXFactor to set
+	 */
+	public void setScaleXFactor(double scaleXFactor)
+	{
+		this.mScaleXFactor = scaleXFactor;
+	}
+
+	/**
+	 * @return the mReady
+	 */
+	public boolean isReady()
+	{
+		return mReady;
+	}
+
+	/**
+	 * @param mReady the mReady to set
+	 */
+	public void setReady(boolean ready)
+	{
+		this.mReady = ready;
+	}
+
+	/**
+	 * @return the mTitle
+	 */
+	public String getTitle()
+	{
+		return mTitle;
+	}
+
+	/**
+	 * @param mTitle the mTitle to set
+	 */
+	public void setTitle(String title)
+	{
+		this.mTitle = title;
+		//this.drawTitle();
+	}
+
+	/**
+	 * @return the mInfoBox1
+	 */
+	public String getInfoBox1()
+	{
+		return mInfoBox1;
+	}
+
+	/**
+	 * @param mInfoBox1 the mInfoBox1 to set
+	 */
+	public void setInfoBox1(String infoBox1)
+	{
+		this.mInfoBox1 = infoBox1;
+	}
+
+	/**
+	 * @return the mInfoBox2
+	 */
+	public String getInfoBox2()
+	{
+		return mInfoBox2;
+	}
+
+	/**
+	 * @param mInfoBox2 the mInfoBox2 to set
+	 */
+	public void setInfoBox2(String infoBox2)
+	{
+		this.mInfoBox2 = infoBox2;
+	}
+
+	/**
+	 * @return the mInfoBox3
+	 */
+	public String getInfoBox3()
+	{
+		return mInfoBox3;
+	}
+
+	/**
+	 * @param mInfoBox3 the mInfoBox3 to set
+	 */
+	public void setInfoBox3(String infoBox3)
+	{
+		this.mInfoBox3 = infoBox3;
+	}
+
+	/**
+	 * @return the mStage
+	 */
+	public Stage getStage()
+	{
+		return mStage;
+	}
+
+	/**
+	 * @return the mScene
+	 */
+	public Scene getScene()
+	{
+		return mScene;
+	}
+
+	/**
+	 * @return the mCanvas
+	 */
+	public Canvas getCanvas()
+	{
+		return mCanvas;
+	}
+
+	/**
+	 * @return the mContext
+	 */
+	public GraphicsContext getContext()
+	{
+		return mContext;
+	}
+
+	/**
+	 * @return the mGroundX
+	 */
+	public double getGroundX()
+	{
+		return mGroundX;
+	}
+
+	/**
+	 * @return the mGroundY
+	 */
+	public double getGroundY()
+	{
+		return mGroundY;
+	}
+
+	/**
+	 * @return the mScaleYFactor
+	 */
+	public double getScaleYFactor()
+	{
+		return mScaleYFactor;
+	}
+
+	/**
+	 * @return the dEFAULT_BLOCK_COLOR
+	 */
+	public Color getDEFAULT_BLOCK_COLOR()
+	{
+		return DEFAULT_BLOCK_COLOR;
+	}
+
+	/**
+	 * @return the dEFAULT_BLOCK_STROKE_COLOR
+	 */
+	public Color getDEFAULT_BLOCK_STROKE_COLOR()
+	{
+		return DEFAULT_BLOCK_STROKE_COLOR;
+	}
+
+	/**
+	 * @return the dEFUALT_POINTER_BLOCK_COLOR
+	 */
+	public Color getDEFUALT_POINTER_BLOCK_COLOR()
+	{
+		return DEFUALT_POINTER_BLOCK_COLOR;
+	}
+
+	/**
+	 * @return the mAX_SCALE_X
+	 */
+	public double getMAX_SCALE_X()
+	{
+		return MAX_SCALE_X;
+	}
+
+	/**
+	 * @return the mAX_SCLAE_Y
+	 */
+	public double getMAX_SCLAE_Y()
+	{
+		return MAX_SCLAE_Y;
+	}
+	
+	
+	private class InfoBox extends Label
+	{
+		public InfoBox()
+		{
+			super();
+			
+		}
+		
 	}
 
 }

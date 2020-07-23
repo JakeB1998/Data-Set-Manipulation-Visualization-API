@@ -6,7 +6,7 @@
  * Date: Jul 19, 2020
  *
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.step;
 
 /**
  * Abstract class that represents the basic structure of executing a step and reading its results.

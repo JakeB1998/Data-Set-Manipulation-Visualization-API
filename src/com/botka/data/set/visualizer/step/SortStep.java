@@ -8,8 +8,6 @@
  */
 package com.botka.data.set.visualizer.step;
 
-import com.botka.data.set.visualizer.StepResult;
-
 /**
  * Class providing implementation to the abstract class: StepResult
  *
@@ -19,7 +17,7 @@ import com.botka.data.set.visualizer.StepResult;
 public class SortStep extends StepResult
 {
 	private int mIndex, mStep;
-	private boolean mDone;
+	
 	
 	/**
 	 * Main constructor
@@ -29,10 +27,10 @@ public class SortStep extends StepResult
 	 */
 	public SortStep(int index, int step, boolean done)
 	{
-		super(step);
+		super(step,done);
 		this.mIndex = index;
 		this.mStep = step;
-		this.mDone = done;
+		
 	}
 	
 	/**
@@ -44,13 +42,5 @@ public class SortStep extends StepResult
 		return this.mIndex;
 	}
 	
-	/**
-	 * 
-	 * @return state of the playable operation
-	 */
-	public boolean isDone()
-	{
-		return this.mDone;
-	}
 
 }

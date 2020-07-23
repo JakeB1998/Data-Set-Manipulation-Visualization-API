@@ -6,7 +6,7 @@
  * Date: Jul 16, 2020
  *
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.sort;
 
 /**
  * ArraySorter Class that sorts arrays rangind from primitives to generics using type paramaters

@@ -8,7 +8,16 @@
  */
 package com.botka.data.set.visualizer.render.engine;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.botka.data.set.visualizer.ExecuteInMainThreadManager;
+import com.botka.data.set.visualizer.JavaFXTestDriver;
+import com.botka.data.set.visualizer.data.DataSet;
 import com.botka.data.set.visualizer.sort.Sort;
+import com.botka.data.set.visualizer.step.StepOperation;
+import com.botka.data.set.visualizer.step.StepResult;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
 
 /**
@@ -26,26 +35,34 @@ public final class RenderEngine
 	private AsyncOperation mThreadRunner;
 	private Render mRenderCallback;
 	private int mCyclesPerSecond;
-	private Sort mSortingAlgorithm;
+	private StepOperation mStepOperation;
 	
 	/**
-	 * @paramrenderCallback
+	 * @param Render interface callback method
 	 */
-	public RenderEngine(Render renderCallback)
+	public RenderEngine(Render renderCallback, StepOperation stepOp)
 	{
 		this.mRenderCallback = renderCallback;
 		this.mCyclesPerSecond = -1; //init to null value;
+		this.mStepOperation = stepOp;
 	}
-	
-	public RenderEngine(Render callback, int cyclesPerSecond)
+	/**
+	 * 
+	 * @param Render interface callback method
+	 * @param cyclesPerSecond
+	 */
+	public RenderEngine(Render callback, StepOperation stepOp,  int cyclesPerSecond)
 	{
-		this(callback);
+		this(callback, stepOp);
 		this.mCyclesPerSecond = cyclesPerSecond;
 	}
-	
-	public RenderEngine(Visualizer visualizer)
+	/**
+	 * 
+	 * @param visualizer
+	 */
+	public RenderEngine(Visualizer visualizer, StepOperation stepOp)
 	{
-		this((Render)visualizer);
+		this((Render)visualizer, stepOp);
 	}
 	
 	/**
@@ -53,9 +70,9 @@ public final class RenderEngine
 	 * @param renderCallback
 	 * @param cyclesPerSecond
 	 */
-	public RenderEngine(Visualizer visualizer, int cyclesPerSecond)
+	public RenderEngine(Visualizer visualizer, StepOperation stepOp, int cyclesPerSecond)
 	{
-		this((Render)visualizer, cyclesPerSecond);
+		this((Render)visualizer, stepOp, cyclesPerSecond);
 		
 	}
 	
@@ -66,17 +83,56 @@ public final class RenderEngine
 	{
 		 // if null then assign default otherwise keep same
 		this.mCyclesPerSecond = this.mCyclesPerSecond == -1 ? DEFAULT_CYCLES_PER_SECOND : this.mCyclesPerSecond;
-		
-		this.render();
+		this.startRenderer();
 		
 	}
 	
 	/**
 	 * Called to manualy call a rendering operation
 	 */
-	public void onStep()
+	public void onStep(int step)
 	{
-		this.render();
+		if (this.mStepOperation != null)
+		{
+			StepResult result = this.mStepOperation.onStep(step);
+			this.render();
+			if (result.isDone())
+			{
+				System.out.println("Sort is done from step result");
+				this.haltRenderer();
+			}
+		}
+		else
+		{
+			this.haltRenderer();
+		}
+		
+	}
+	
+	
+	public void haltRenderer()
+	{
+		if (this.mThreadRunner != null)
+		{
+			this.mThreadRunner.stopThread();
+		}
+	}
+	
+	public void restartRenderer()
+	{
+		this.startRenderer();
+	}
+	
+	public void startRenderer()
+	{
+		this.mThreadRunner = new AsyncOperation();
+		//Thread thread = new Thread(this.mThreadRunner);
+		//thread.setDaemon(true);
+		//thread.start();
+		
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.submit(this.mThreadRunner);
+		executor.shutdown(); //awaits for task to complete
 	}
 	
 	/**
@@ -94,11 +150,54 @@ public final class RenderEngine
 	{
 
 		private boolean mRunning;
+		private int mCyclesPerSec;
+		public AsyncOperation()
+		{
+			mCyclesPerSec = mCyclesPerSecond == -1 ? DEFAULT_CYCLES_PER_SECOND : mCyclesPerSecond;
+		}
 		@Override
 		public void run()
 		{
-			// TODO Auto-generated method stub
+			mRunning = true;
+			long cycle = 0;
+			long loggedTime = System.currentTimeMillis();
+			long millisecondPerCycle = 1000 / mCyclesPerSec;
+			long timeRec = -1;
+			int steps = 0;
+			BlockingQueue<Runnable> queue = ExecuteInMainThreadManager.getInstance().getQueue();
+			while (mRunning)
+			{
+				timeRec = System.currentTimeMillis() - loggedTime;
+				if (timeRec >= millisecondPerCycle)
+				{
+					//System.out.println(timeRec);
+					cycle = 0;
+					loggedTime = System.currentTimeMillis();
+					steps++;
+					final int stepCount = steps; // for enclosing viarable
+					 
+					 synchronized(queue) //ensures that other objects will block if accesssing object at same time
+					 {
+						 queue.add(new Runnable(){
+				                @Override
+				                public void run() {
+				                	onStep(stepCount);
+				                }
+				            });
+						 queue.notifyAll(); //notifiies moniter that queue is avaliable to access
+					 }
+					 
+					 
+					
+				}
+				
+			}
 			
+		}
+		
+		public void stopThread()
+		{
+			mRunning = false;
 		}
 		
 	}
