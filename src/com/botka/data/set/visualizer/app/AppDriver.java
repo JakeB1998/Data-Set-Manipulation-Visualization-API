@@ -6,7 +6,7 @@
  * Date: Jul 22, 2020
  *
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.app;
 
 /**
  * <insert class description here>
@@ -14,7 +14,7 @@ package com.botka.data.set.visualizer;
  * @author Jake Botka
  *
  */
-public class Driver
+public class AppDriver
 {
 
 	/**

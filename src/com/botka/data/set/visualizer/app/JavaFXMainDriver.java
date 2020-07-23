@@ -7,7 +7,7 @@
  *
  * Out Of Class Personal Program
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +19,8 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.botka.data.set.visualizer.ExecuteInMainThreadManager;
+import com.botka.data.set.visualizer.IRunOnMainThread;
 import com.botka.data.set.visualizer.data.DataSet;
 import com.botka.data.set.visualizer.readers.FileReader;
 import com.botka.data.set.visualizer.render.engine.RenderEngine;
@@ -41,7 +43,7 @@ import javafx.stage.Stage;
  * @author Jake Botka
  *
  */
-public class JavaFXTestDriver extends Application implements IRunOnMainThread
+public class JavaFXMainDriver extends Application implements IRunOnMainThread
 {
 
 	private  static final ExecuteInMainThreadManager MANAGER = ExecuteInMainThreadManager.getInstance();
@@ -50,7 +52,7 @@ public class JavaFXTestDriver extends Application implements IRunOnMainThread
 	 */
 	public static void main(String[] args)
 	{
-		Application.launch(args);
+		Application.launch(args); // calls the start method below
 
 	}
 
@@ -66,9 +68,10 @@ public class JavaFXTestDriver extends Application implements IRunOnMainThread
 		Group root = new Group();
 		root.getChildren().add(canvas);
 		scene = new Scene(root);
+		
 		DataSet<Double> dataSet = new DataSet(0);
 		
-		// inser data here start
+		// insert data here start
 		Random ran = new Random();
 		for (int i = 0; i < 1000; i++) // generates random data
 		{

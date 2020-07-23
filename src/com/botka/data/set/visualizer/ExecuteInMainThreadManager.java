@@ -5,6 +5,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javafx.application.Platform;
 
+/**
+ * 
+ * Backroudn thread that manages tasks that are to be called on the main thread by implements the IOnMainThread interface.
+ * This allows programmers to implemnt their own method of transfering data to the main thread or UI thread.
+ * This is frameworj dependent thus why implementation is required depending on the framework
+ *
+ * @author Jake Botka
+ *
+ */
 public class ExecuteInMainThreadManager
 {
 	private final BlockingQueue<Runnable> QUEUE = new LinkedBlockingQueue<Runnable>();

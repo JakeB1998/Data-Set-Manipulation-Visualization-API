@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.botka.data.set.visualizer.ExecuteInMainThreadManager;
-import com.botka.data.set.visualizer.JavaFXTestDriver;
+import com.botka.data.set.visualizer.app.JavaFXMainDriver;
 import com.botka.data.set.visualizer.data.DataSet;
 import com.botka.data.set.visualizer.sort.Sort;
 import com.botka.data.set.visualizer.step.StepOperation;
