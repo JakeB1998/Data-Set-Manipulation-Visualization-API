@@ -9,6 +9,8 @@
  */
 package com.botka.data.set.visualizer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.botka.data.set.visualizer.data.DataSet;
+import com.botka.data.set.visualizer.readers.FileReader;
 import com.botka.data.set.visualizer.render.engine.RenderEngine;
 import com.botka.data.set.visualizer.sort.ArraySorter;
 import com.botka.data.set.visualizer.sort.BubbleSort;
@@ -65,18 +68,19 @@ public class JavaFXTestDriver extends Application implements IRunOnMainThread
 		scene = new Scene(root);
 		DataSet<Double> dataSet = new DataSet(0);
 		
+		// inser data here start
 		Random ran = new Random();
 		for (int i = 0; i < 1000; i++) // generates random data
 		{
 			dataSet.add(ran.nextDouble() * 100);
 		}
+		//insert data here end
+	
 		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
 		StepOperation stepOp = new BubbleSort(dataSet);
 		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
 		
 		MANAGER.setMainThreadCallback(this);
-		
-		
 		visual.init();
 		engine.init();
 		
@@ -86,6 +90,90 @@ public class JavaFXTestDriver extends Application implements IRunOnMainThread
 		
 		
 		//objectSortTest();
+	}
+	
+	/**
+	 * Option 1 is driven by randoimly generated data
+	 * @param stage
+	 */
+	public void option1(Stage stage,  Scene scene, Canvas canvas)
+	{
+		
+		DataSet<Double> dataSet = new DataSet(0);
+		
+		// inser data here start
+		Random ran = new Random();
+		for (int i = 0; i < 1000; i++) // generates random data
+		{
+			dataSet.add(ran.nextDouble() * 100);
+		}
+		//insert data here end
+	
+		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
+		StepOperation stepOp = new BubbleSort(dataSet);
+		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
+		
+		MANAGER.setMainThreadCallback(this);
+		visual.init();
+		engine.init();
+		
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	/**
+	 * option 2 is ran with data that was extracted from a file
+	 * @param stage
+	 * @param scene
+	 * @param canvas
+	 * @param file
+	 */
+	public void option2(Stage stage, Scene scene, Canvas canvas, File file)
+	{
+		
+		
+		DataSet<Double> dataSet = readDataFromFile(file);
+		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
+		StepOperation stepOp = new BubbleSort(dataSet);
+		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
+		
+		MANAGER.setMainThreadCallback(this);
+		visual.init();
+		engine.init();
+		
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	/**
+	 * reads data from file
+	 * @param file
+	 * @return
+	 */
+	public static DataSet<Double> readDataFromFile(File file)
+	{
+		try
+		{
+			FileReader reader = new FileReader(file);
+			DataSet<Double> dataset = null;
+			double[] arr = reader.readAllDoubles();
+			dataset = new DataSet<Double>(0);
+			if (arr != null)
+			{
+				for (double d : arr)
+				{
+					dataset.add(new Double(d));
+				}
+			}
+			
+			return dataset;
+		} catch (FileNotFoundException e)
+		{
+			
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 	
 	public static double round(double value, int places) {
