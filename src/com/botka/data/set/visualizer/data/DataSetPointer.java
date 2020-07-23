@@ -6,7 +6,7 @@
  * Date: Jul 18, 2020
  *
  */
-package com.botka.data.set.visualizer;
+package com.botka.data.set.visualizer.data;
 
 import java.util.Iterator;
 
@@ -16,7 +16,7 @@ import java.util.Iterator;
  * @author Jake Botka
  *
  */
-public class DataSetItterator
+public class DataSetPointer
 {
 
 	private int mPointerPosition;
@@ -24,17 +24,17 @@ public class DataSetItterator
 	/**
 	 * 
 	 */
-	public DataSetItterator(Iterator iterator)
+	public DataSetPointer()
 	{
 		this.mPointerPosition = 0;
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void incrementPosition()
+	public synchronized void incrementPosition()
 	{
 		this.mPointerPosition++;
 	}
-	
+		
 	
 	public int getPointerPosition()
 	{

@@ -10,7 +10,7 @@
  */
 package com.botka.data.set.visualizer.visualizer;
 
-import com.botka.data.set.visualizer.DataSet;
+import com.botka.data.set.visualizer.data.DataSet;
 import com.botka.data.set.visualizer.render.engine.Render;
 
 /**
@@ -40,11 +40,21 @@ public abstract class Visualizer implements Render
 	}
 	
 	public abstract void init();
-	public abstract void drawPointer(DataSet set);
+	public abstract void drawPointer(DataSet<?> set);
 	public abstract void onDataChanged(Object oldObj, Object newObj, int oldIndex, int newIndex); // multiple interperations of parameters
 	public abstract void onDataAdded(Object newObj, int index, boolean sizeIncreased);
 	public abstract void onDataRemoved(Object oldObj, int index, boolean sizeDecreased);
 	public abstract void onDataMoved(Object obj, int oldIndex, int newIndex);
+	
+	
+	public abstract String getTitle();
+	public abstract String getInfoBox1();
+	public abstract String getInfoBox2();
+	public abstract String getInfoBox3();
+	public abstract void setTitle(String title);
+	public abstract void setInfoBox1(String info);
+	public abstract void setInfoBox2(String info);
+	public abstract void setInfoBox3(String info);
 	
 
 }
