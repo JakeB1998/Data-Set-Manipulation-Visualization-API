@@ -26,6 +26,7 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	private T mMax;
 	private T mMin;
 	private DataSetPointer mDataSetIteratorInfo;
+	private int mComparrisons;
 	/**
 	 * Main constructor
 	 * @param initial size of the dynammic array
@@ -195,6 +196,19 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	}
 	
 	/**
+	 * Swaps two elements
+	 * @param index1
+	 * @param index2
+	 */
+	public void swap(int index1, int index2)
+	{
+		Object o1 = super.remove(index1);
+		Object o2 = super.remove(index2 - 1); //  - 1 due to remove shift);
+		super.add(index1, (T)o2);
+		super.add(index2, (T)o1);
+	}
+	
+	/**
 	 * 
 	 * @return the pointer of this dataset wrapped into an object
 	 */
@@ -202,6 +216,21 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	{
 		return this.mDataSetIteratorInfo;
 	}
+	
+	public synchronized void inncrementComparrisons()
+	{
+		this.mComparrisons++;
+	}
+	public synchronized void resetComparrisons()
+	{
+		this.mComparrisons = 0;
+	}
+	public synchronized int getAmountOfComparrisons()
+	{
+		return mComparrisons;
+		
+	}
+			
 
 
 }

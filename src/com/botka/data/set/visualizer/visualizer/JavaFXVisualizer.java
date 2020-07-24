@@ -197,7 +197,7 @@ public class JavaFXVisualizer extends Visualizer
 		{
 			if (this.mStage.isShowing())
 			{
-				
+				this.clearCanvas();
 			 DataSet<?> set = super.getWorkingDataSet();
 				Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
 				double x = this.mGroundX - this.mScaleXFactor;
@@ -210,18 +210,19 @@ public class JavaFXVisualizer extends Visualizer
 						x = i* this.mScaleXFactor;
 						double y = this.mGroundY;
 						double value = Double.NaN;
+						
 						if (set.isNumber(o))
 						{
 							value = set.parseValue(o);
-							
 							this.setInfoBox1("Value at Pointer: " + String.valueOf(df.format(value)));
 							y-= value * this.mScaleYFactor;
 						}
 						else // if not a number
 							y = i * this.mScaleYFactor;
+					
 						
 						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
-						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
+						//this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
 						
 						//TODO: Render text;
 						//this.drawUI();
@@ -231,6 +232,7 @@ public class JavaFXVisualizer extends Visualizer
 				}
 				
 				this.drawPointer(set); // draws the position of the pointer
+				this.handleUI();
 			}
 		}
 		else
@@ -252,8 +254,18 @@ public class JavaFXVisualizer extends Visualizer
 		this.mContext.fillText(this.getInfoBox1(), this.mTextX, 200);
 	}
 	*/
-	
-	
+	/**
+	 * Handles the textualUI
+	 */
+	public void handleUI()
+	{
+		this.setTitle("Buble Sort Visualization: \tComparrisons: " + super.getWorkingDataSet().getAmountOfComparrisons());
+		this.mStage.setTitle(this.getTitle());;
+	}
+	public void clearCanvas()
+	{
+		this.mContext.clearRect(0, 0, this.mCanvas.getWidth(), this.mCanvas.getHeight());
+	}
 
 	/**
 	 * @param Data set
