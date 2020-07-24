@@ -164,7 +164,7 @@ public final class RenderEngine
 			long millisecondPerCycle = 1000 / mCyclesPerSec;
 			long timeRec = -1;
 			int steps = 0;
-			BlockingQueue<Runnable> queue = ExecuteInMainThreadManager.getInstance().getQueue();
+			 BlockingQueue<Runnable> queue = ExecuteInMainThreadManager.getInstance().getQueue();
 			while (mRunning)
 			{
 				timeRec = System.currentTimeMillis() - loggedTime;
@@ -182,6 +182,8 @@ public final class RenderEngine
 				                @Override
 				                public void run() {
 				                	onStep(stepCount);
+				                	ExecuteInMainThreadManager.getInstance().getTaskDoneFlag().set(true);
+				                	
 				                }
 				            });
 						 queue.notifyAll(); //notifiies moniter that queue is avaliable to access

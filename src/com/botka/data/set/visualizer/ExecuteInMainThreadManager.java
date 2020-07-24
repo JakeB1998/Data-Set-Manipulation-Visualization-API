@@ -2,6 +2,7 @@ package com.botka.data.set.visualizer;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.application.Platform;
 
@@ -18,6 +19,7 @@ public class ExecuteInMainThreadManager
 {
 	private final BlockingQueue<Runnable> QUEUE = new LinkedBlockingQueue<Runnable>();
 	public static final ExecuteInMainThreadManager INSTANCE = new ExecuteInMainThreadManager();
+	public final AtomicBoolean mDoneOnUIThread = new AtomicBoolean();
 	
 	private IRunOnMainThread mCallback;
 	public static ExecuteInMainThreadManager getInstance()
@@ -45,6 +47,11 @@ public class ExecuteInMainThreadManager
 	public void setMainThreadCallback(IRunOnMainThread callback)
 	{
 		this.mCallback = callback;
+	}
+	
+	public AtomicBoolean getTaskDoneFlag()
+	{
+		return this.mDoneOnUIThread;
 	}
 	
 	
@@ -79,6 +86,12 @@ public class ExecuteInMainThreadManager
 							if (callback != null)
 							{
 								callback.runOnMainThread(runnable);
+								while(mDoneOnUIThread.get() == false) // waiting for task to be done
+								{
+									
+								}
+								System.out.println("Task finished in UI thread");
+								mDoneOnUIThread.set(false);
 							}
 							
 							runnable = null;

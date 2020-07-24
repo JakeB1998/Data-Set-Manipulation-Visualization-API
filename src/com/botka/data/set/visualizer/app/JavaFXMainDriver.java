@@ -73,7 +73,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 		
 		// insert data here start
 		Random ran = new Random();
-		for (int i = 0; i < 1000; i++) // generates random data
+		for (int i = 0; i < 100; i++) // generates random data
 		{
 			dataSet.add(ran.nextDouble() * 100);
 		}
@@ -81,7 +81,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 	
 		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
 		StepOperation stepOp = new BubbleSort(dataSet);
-		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
+		RenderEngine engine = new RenderEngine(visual,stepOp, 200);
 		
 		MANAGER.setMainThreadCallback(this);
 		visual.init();
@@ -106,7 +106,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 		
 		// inser data here start
 		Random ran = new Random();
-		for (int i = 0; i < 1000; i++) // generates random data
+		for (int i = 0; i < 100; i++) // generates random data
 		{
 			dataSet.add(ran.nextDouble() * 100);
 		}
@@ -114,7 +114,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 	
 		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
 		StepOperation stepOp = new BubbleSort(dataSet);
-		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
+		RenderEngine engine = new RenderEngine(visual,stepOp, 120);
 		
 		MANAGER.setMainThreadCallback(this);
 		visual.init();

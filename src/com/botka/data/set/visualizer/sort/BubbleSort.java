@@ -30,7 +30,7 @@ public class BubbleSort extends Sort
 	 */
 	public BubbleSort(DataSet set)
 	{
-		super(SORTING_ALGORITHM, set,500);
+		super(SORTING_ALGORITHM, set, Integer.MAX_VALUE);
 		
 	}
 
@@ -45,15 +45,32 @@ public class BubbleSort extends Sort
 		System.out.println(canStep);
 		if (canStep)
 		{
-			DataSet set = super.getDataSet();
+			DataSet<Comparable> set = (DataSet<Comparable>) super.getDataSet();
 			//TODO do sort step here
 			
 			int index = set.getPointerInfo().getPointerPosition();
+			System.out.println(index);
 			
-			if (index < set.size())
-				index++;
+			
+			if (index + 1 < set.size())
+			{
+				int compare = set.get(index).compareTo(set.get(index + 1));
+				if (compare > 0) // swap
+				{
+					System.out.println("Swaped: ");
+					set.swap(index, index + 1);
+					
+				}
 				
+				
+				index++;
+			}
+			else
+				index = 0;
+				
+		
 			set.getPointerInfo().setPointerPosition(index);
+			set.inncrementComparrisons();
 			return new SortStep(index, stepCount++, !canStep);
 		}
 		
@@ -69,6 +86,23 @@ public class BubbleSort extends Sort
 	@Override
 	public boolean canStep(int currentStep)
 	{
+		boolean notSorted = false;
+		DataSet<Comparable> set = (DataSet<Comparable>) super.getDataSet();
+		if (set  != null)
+		{
+			for (int i =0; i < set.size(); i++)
+			{
+				if (set.get(i).compareTo(set.get(i + 1)) > 0)
+				{
+					return true;
+				}
+			}
+			
+			return false;
+			
+		}
+		else
+			System.err.print("Dataset is null");
 		return currentStep < super.getMaxAmountOfSteps();
 	}
 
