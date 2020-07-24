@@ -109,7 +109,9 @@ public final class RenderEngine
 		
 	}
 	
-	
+	/**
+	 * Stops the renderer
+	 */
 	public void haltRenderer()
 	{
 		if (this.mThreadRunner != null)
@@ -118,11 +120,17 @@ public final class RenderEngine
 		}
 	}
 	
+	/**
+	 * Resets the renderer
+	 */
 	public void restartRenderer()
 	{
 		this.startRenderer();
 	}
 	
+	/**
+	 * Starts the rednerer
+	 */
 	public void startRenderer()
 	{
 		this.mThreadRunner = new AsyncOperation();
@@ -146,6 +154,13 @@ public final class RenderEngine
 		}
 	}
 	
+	/**
+	 * 
+	 * Thread builder that handles background calculations to the dataset before rendering
+	 *
+	 * @author Jake Botka
+	 *
+	 */
 	private class AsyncOperation implements Runnable
 	{
 
@@ -159,10 +174,11 @@ public final class RenderEngine
 		public void run()
 		{
 			mRunning = true;
-			long cycle = 0;
+
 			long loggedTime = System.currentTimeMillis();
-			long millisecondPerCycle = 1000 / mCyclesPerSec;
+			final long millisecondPerCycle = 1000 / mCyclesPerSec;
 			long timeRec = -1;
+			long deltaTime = 0;
 			int steps = 0;
 			 BlockingQueue<Runnable> queue = ExecuteInMainThreadManager.getInstance().getQueue();
 			while (mRunning)
@@ -170,8 +186,7 @@ public final class RenderEngine
 				timeRec = System.currentTimeMillis() - loggedTime;
 				if (timeRec >= millisecondPerCycle)
 				{
-					//System.out.println(timeRec);
-					cycle = 0;
+					;
 					loggedTime = System.currentTimeMillis();
 					steps++;
 					final int stepCount = steps; // for enclosing viarable
@@ -189,7 +204,7 @@ public final class RenderEngine
 						 queue.notifyAll(); //notifiies moniter that queue is avaliable to access
 					 }
 					 
-					 
+					 deltaTime = System.currentTimeMillis() - loggedTime; // time difference between start and end execution
 					
 				}
 				
@@ -197,6 +212,9 @@ public final class RenderEngine
 			
 		}
 		
+		/**
+		 * Stops thread. Must be called by outer class
+		 */
 		public void stopThread()
 		{
 			mRunning = false;
