@@ -21,7 +21,7 @@ import com.botka.data.set.visualizer.step.StepResult;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
 
 /**
- * Can not exstend from.
+ * Can not extend from.
  * Base class for the render engine.
  * Supports multiple UI frameworks through render interface vallbacks
  *
@@ -35,7 +35,7 @@ public final class RenderEngine
 	private AsyncOperation mThreadRunner;
 	private Render mRenderCallback;
 	private int mCyclesPerSecond;
-	private StepOperation mStepOperation;
+	private StepOperation mStepOperation; 
 	
 	/**
 	 * @param Render interface callback method
@@ -95,12 +95,14 @@ public final class RenderEngine
 		if (this.mStepOperation != null)
 		{
 			StepResult result = this.mStepOperation.onStep(step);
-			this.render();
+			
 			if (result.isDone())
 			{
 				System.out.println("Sort is done from step result");
 				this.haltRenderer();
 			}
+			else
+				this.render();
 		}
 		else
 		{
@@ -163,7 +165,6 @@ public final class RenderEngine
 	 */
 	private class AsyncOperation implements Runnable
 	{
-
 		private boolean mRunning;
 		private int mCyclesPerSec;
 		public AsyncOperation()
@@ -181,35 +182,31 @@ public final class RenderEngine
 			long deltaTime = 0;
 			int steps = 0;
 			 BlockingQueue<Runnable> queue = ExecuteInMainThreadManager.getInstance().getQueue();
-			while (mRunning)
+			while (!isHalted())
 			{
 				timeRec = System.currentTimeMillis() - loggedTime;
 				if (timeRec >= millisecondPerCycle)
 				{
-					;
 					loggedTime = System.currentTimeMillis();
 					steps++;
-					final int stepCount = steps; // for enclosing viarable
-					 
-					 synchronized(queue) //ensures that other objects will block if accesssing object at same time
+					final int stepCount = steps; // for enclosing variable
+					synchronized(queue) //ensures that other objects will block if accessing object at same time
 					 {
 						 queue.add(new Runnable(){
 				                @Override
 				                public void run() {
-				                	onStep(stepCount);
-				                	ExecuteInMainThreadManager.getInstance().getTaskDoneFlag().set(true);
-				                	
+				                	if (!isHalted())
+				                	{
+					                	onStep(stepCount);
+					                	ExecuteInMainThreadManager.getInstance().getTaskDoneFlag().set(true);
+				                	}
 				                }
 				            });
-						 queue.notifyAll(); //notifiies moniter that queue is avaliable to access
+						 queue.notifyAll(); //Notifies monitor that queue is available to access
 					 }
-					 
 					 deltaTime = System.currentTimeMillis() - loggedTime; // time difference between start and end execution
-					
 				}
-				
-			}
-			
+			}	
 		}
 		
 		/**
@@ -220,7 +217,9 @@ public final class RenderEngine
 			mRunning = false;
 		}
 		
+		public boolean isHalted()
+		{
+			return !this.mRunning;
+		}
 	}
-	
-
 }

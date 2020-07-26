@@ -28,9 +28,10 @@ public class BubbleSort extends Sort
 	/**
 	 * @param sortAlgo
 	 */
-	public BubbleSort(DataSet set)
+	public BubbleSort(DataSet set, IFinishedListener finishedListener)
 	{
 		super(SORTING_ALGORITHM, set, Integer.MAX_VALUE);
+		super.registerOnFinishedListener(finishedListener);
 		
 	}
 
@@ -59,10 +60,7 @@ public class BubbleSort extends Sort
 				{
 					System.out.println("Swaped: ");
 					set.swap(index, index + 1);
-					
 				}
-				
-				
 				index++;
 			}
 			else
@@ -71,8 +69,12 @@ public class BubbleSort extends Sort
 		
 			set.getPointerInfo().setPointerPosition(index);
 			set.inncrementComparrisons();
+			
+			
 			return new SortStep(index, stepCount++, !canStep);
 		}
+		else
+			super.onFinished();
 		
 		return new SortStep(super.getDataSet().getPointerInfo().getPointerPosition(), stepCount, true);
 		
@@ -92,9 +94,12 @@ public class BubbleSort extends Sort
 		{
 			for (int i =0; i < set.size(); i++)
 			{
-				if (set.get(i).compareTo(set.get(i + 1)) > 0)
+				if (i + 1 < set.size())
 				{
-					return true;
+					if (set.get(i).compareTo(set.get(i + 1)) > 0)
+					{
+						return true;
+					}
 				}
 			}
 			
