@@ -69,7 +69,8 @@ public class JavaFXVisualizer extends Visualizer
 
 	/**
 	 * 
-	 * @param stage
+	 * @param the dataset the visualizer will work with
+	 * @param  the Javafx stage window
 	 */
 	public JavaFXVisualizer(DataSet<?> dataSet, Stage stage)
 	{
@@ -79,8 +80,9 @@ public class JavaFXVisualizer extends Visualizer
 	
 	/**
 	 * 
-	 * @param stage
-	 * @param scene
+	 * @param the dataset the visualizer will work with
+	 * @param  the Javafx stage window
+	 * @param The JavaFX scene container
 	 */
 	public JavaFXVisualizer(DataSet<?> dataSet,Stage stage, Scene scene)
 	{
@@ -91,10 +93,10 @@ public class JavaFXVisualizer extends Visualizer
 	
 
 	/**
-	 * 
-	 * @param stage
-	 * @param scene
-	 * @param canvas
+	 *
+	 * @param  the Javafx stage window
+	 * @param The JavaFX scene container
+	 * @param The canvas container to draw on
 	 */
 	public JavaFXVisualizer(DataSet<?> dataSet,Stage stage, Scene scene, Canvas canvas)
 	{
@@ -171,6 +173,7 @@ public class JavaFXVisualizer extends Visualizer
 	
 	/**
 	 * Inits the canvas settings
+	 * ONly to be callled inside of this class
 	 */
 	private void initCanvasSettings()
 	{
@@ -198,6 +201,11 @@ public class JavaFXVisualizer extends Visualizer
 		return false;
 	}
 	
+	/**
+	 * Returns an error message that specifies why the visualizer is not ready.
+	 * This is most liekly due to null objects however this method will return which objects are null
+	 * @return
+	 */
 	public String checkErrorCode()
 	{
 		if (this.mReady)
@@ -274,19 +282,25 @@ public class JavaFXVisualizer extends Visualizer
 		
 	}
 	/**
-	 * Handles the textualUI
+	 * Handles the textual UI
+	 * This is done not through the canvas but through FXML elements using a Label object
 	 */
 	public void handleUI()
 	{
 		this.setTitle(this.getPrefixtitle() + " Visualization: \tComparrisons: " + super.getWorkingDataSet().getAmountOfComparrisons());
 		this.mStage.setTitle(this.getTitle());;
 	}
+	
+	/**
+	 * Clears the entire canvas
+	 */
 	public void clearCanvas()
 	{
 		this.mContext.clearRect(0, 0, this.mCanvas.getWidth(), this.mCanvas.getHeight());
 	}
 
 	/**
+	 * Draws a pointer on the canvass using the graphics context associated with the canvas.
 	 * @param Data set
 	 */
 	@Override
