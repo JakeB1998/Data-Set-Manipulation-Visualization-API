@@ -21,6 +21,7 @@ import com.botka.data.set.visualizer.readers.FileReader;
 import com.botka.data.set.visualizer.render.engine.RenderEngine;
 import com.botka.data.set.visualizer.sort.ArraySorter;
 import com.botka.data.set.visualizer.sort.BubbleSort;
+import com.botka.data.set.visualizer.sort.IFinishedListener;
 import com.botka.data.set.visualizer.step.StepOperation;
 import com.botka.data.set.visualizer.visualizer.JavaFXVisualizer;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
@@ -39,7 +40,7 @@ import javafx.stage.Stage;
  * @author Jake Botka
  *
  */
-public class AppDriver extends Application implements IRunOnMainThread
+public class AppDriver extends Application implements IRunOnMainThread, IFinishedListener
 {
 
 	private  static final ExecuteInMainThreadManager MANAGER = ExecuteInMainThreadManager.getInstance();
@@ -76,7 +77,7 @@ public class AppDriver extends Application implements IRunOnMainThread
 		//insert data here end
 	
 		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
-		StepOperation stepOp = new BubbleSort(dataSet);
+		StepOperation stepOp = new BubbleSort(dataSet, this);
 		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
 		
 		MANAGER.setMainThreadCallback(this);
@@ -104,6 +105,13 @@ public class AppDriver extends Application implements IRunOnMainThread
 	public void runOnMainThread(Runnable run)
 	{
 		Platform.runLater(run); //javafx implementation of communicating to main thread
+		
+	}
+
+	@Override
+	public void onFinished()
+	{
+		// TODO Auto-generated method stub
 		
 	}
 

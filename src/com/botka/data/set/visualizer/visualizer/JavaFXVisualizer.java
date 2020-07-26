@@ -14,7 +14,14 @@ import java.util.Scanner;
 
 import com.botka.data.set.visualizer.data.DataSet;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * <insert class description here>
@@ -33,10 +41,11 @@ public class JavaFXVisualizer extends Visualizer
 {
 	private Stage mStage;
 	private Scene mScene;
+
 	private Canvas mCanvas;
 	private GraphicsContext mContext;
 	private double mGroundX, mGroundY,  mScaleXFactor, mScaleYFactor;
-	private boolean mReady;
+	private boolean mReady, mStarted;
 	
 	private final Color DEFAULT_BLOCK_COLOR = Color.GREY;
 	private final Color DEFAULT_BLOCK_STROKE_COLOR = Color.WHITESMOKE;
@@ -45,6 +54,7 @@ public class JavaFXVisualizer extends Visualizer
 	private final double MAX_SCLAE_Y = 100.0;
 	private double mTextX;
 	
+	private String mPrefixTitle;
 	private String mTitle;
 	private String mInfoBox1;
 	private String mInfoBox2;
@@ -85,9 +95,7 @@ public class JavaFXVisualizer extends Visualizer
 		this(dataSet, stage,scene);
 		this.mCanvas = canvas;
 		// if canvas null then assign context null otherwise call canvas getContext method;
-		
 	
-		
 	}
 	
 	/**
@@ -103,6 +111,8 @@ public class JavaFXVisualizer extends Visualizer
 		this.setInfoBox1("");
 		this.setInfoBox2("");
 		this.setInfoBox3("");
+		if (this.mPrefixTitle == null)
+			this.setPrefixTitle("");
 		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 	
 		this.mReady = this.checkIfReady();
@@ -112,7 +122,18 @@ public class JavaFXVisualizer extends Visualizer
 			this.mCanvas.setWidth(screenBounds.getWidth());
 			this.mCanvas.setHeight(screenBounds.getHeight() - 100);
 			//this.mStage.setResizable(false);
-		
+			Parent parent = this.mScene.getRoot();
+			if (parent instanceof Group)
+			{
+				Group root = (Group)parent;
+				InfoBox infoBox = new InfoBox();
+				double width = this.mCanvas != null ? this.mCanvas.getWidth() : 0.0;
+				infoBox.setText("I am Jeff");
+				infoBox.setLayoutX(width -  (width * 0.2));
+				infoBox.setLayoutY(100);
+				root.getChildren().add(infoBox);
+				System.out.println("Infobox added");
+			}
 			
 		}
 	
@@ -195,8 +216,12 @@ public class JavaFXVisualizer extends Visualizer
 		//System.out.println(Thread.currentThread().getName());
 		if (this.mReady)
 		{
+			if (!this.mStarted)
+				this.onStart();
+			
 			if (this.mStage.isShowing())
 			{
+				System.out.println("On rendered");
 				this.clearCanvas();
 			 DataSet<?> set = super.getWorkingDataSet();
 				Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
@@ -222,7 +247,7 @@ public class JavaFXVisualizer extends Visualizer
 					
 						
 						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
-						//this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
+						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
 						
 						//TODO: Render text;
 						//this.drawUI();
@@ -241,25 +266,12 @@ public class JavaFXVisualizer extends Visualizer
 		}
 		
 	}
-	/*
-	 
-	public void drawTitle()
-	{
-		this.mTextX = (double)this.mCanvas.getWidth() - (this.mCanvas.getWidth() * 0.20);
-		this.mContext.fillText(this.getTitle(), this.mTextX, 25);
-		
-	}
-	public void drawUI()
-	{
-		this.mContext.fillText(this.getInfoBox1(), this.mTextX, 200);
-	}
-	*/
 	/**
 	 * Handles the textualUI
 	 */
 	public void handleUI()
 	{
-		this.setTitle("Buble Sort Visualization: \tComparrisons: " + super.getWorkingDataSet().getAmountOfComparrisons());
+		this.setTitle(this.getPrefixtitle() + " Visualization: \tComparrisons: " + super.getWorkingDataSet().getAmountOfComparrisons());
 		this.mStage.setTitle(this.getTitle());;
 	}
 	public void clearCanvas()
@@ -315,6 +327,7 @@ public class JavaFXVisualizer extends Visualizer
 	 */
 	public void drawAt(double x, double y, double w, double h, Color color, Color previousColor)
 	{
+		
 		if (color == null) // error by programmer
 			color = DEFAULT_BLOCK_COLOR;
 		
@@ -324,6 +337,92 @@ public class JavaFXVisualizer extends Visualizer
 		
 		if (previousColor != null) // does not want to revert back to color
 			this.mContext.setFill(previousColor);
+		
+	}
+	
+
+	/**
+	 * The animation that plays when the visualiztion is finished wether it is a sorting manipulation ro just a real team visualtion
+	 */
+	@Override
+	public void onFinishedAnimation()
+	{
+		GraphicsContext gc = this.mContext;
+		System.out.println("finished animation called");
+		DataSet<Comparable> set = getWorkingDataSet();
+		Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
+		set.getPointerInfo().setPointerPosition(0);
+		
+		final double tickDuration = 10.0;
+		final double duration = 0.02; //seconds per index
+		final int totalCycles = (int) (set.size() * (1000 / tickDuration) * duration);
+		
+		final int cyclesPerIndex = totalCycles / set.size();
+		Timeline oneSec = new Timeline(new KeyFrame(Duration.millis(tickDuration), new EventHandler<ActionEvent>() 
+		{
+
+			double x = 0.0; // current x to draw at
+			double y = 0.0; // current y to draw at
+			int p = 0; // current index of the dataset array
+			int cycles = 0; // current count of cycles
+			double value = Double.NaN; // value to be used to scale the ui elements
+			double a = mScaleXFactor / cyclesPerIndex;
+		    @SuppressWarnings("deprecation")
+			@Override
+		    public void handle(ActionEvent event) 
+		    {
+		    	if (cycles % cyclesPerIndex == 0 )
+		    	{
+					if (iterator.hasNext())
+					{
+						p = set.getPointerInfo().getPointerPosition();
+						Object o = iterator.next();
+						x =(p * mScaleXFactor);
+						y = mGroundY;
+						if (set.isNumber(o))
+						{
+							value = set.parseValue(o);
+							y-= value * mScaleYFactor;
+						}
+						else // if not a number
+							y = p * mScaleYFactor;
+		
+						set.getPointerInfo().setPointerPosition(p + 1);
+					}
+		    	}
+					
+					drawAt(x,y, a, mCanvas.getHeight() - y, Color.GREEN, null); // draws the specific block to scale with its value
+					x += a;
+					cycles++;
+					
+		    }}));
+			oneSec.setCycleCount(totalCycles);
+			oneSec.play();
+			System.out.println(oneSec.getCycleCount());
+				
+		
+	}
+
+	/**
+	 * Called on first render call
+	 */
+	@Override
+	public void onStart()
+	{
+		System.out.println("Visualization started");
+		this.mStarted = true;
+		
+	}
+
+	@Override
+	public void onFinished()
+	{
+		System.out.println("On finished clalled");
+		this.onFinishedAnimation();
+		String str= this.getTitle();
+		str+= " Finished";
+		this.setTitle(str);
+		
 		
 	}
 	
@@ -409,6 +508,15 @@ public class JavaFXVisualizer extends Visualizer
 	{
 		this.mReady = ready;
 	}
+	public String getPrefixtitle()
+	{
+		return this.mPrefixTitle;
+	}
+	
+	public void setPrefixTitle(String value)
+	{
+		this.mPrefixTitle = value;
+	}
 
 	/**
 	 * @return the mTitle
@@ -424,6 +532,8 @@ public class JavaFXVisualizer extends Visualizer
 	public void setTitle(String title)
 	{
 		this.mTitle = title;
+		if (this.mStage != null)
+			this.mStage.setTitle(this.getTitle());
 		//this.drawTitle();
 	}
 
@@ -579,7 +689,10 @@ public class JavaFXVisualizer extends Visualizer
 			super();
 			
 		}
+	
 		
 	}
+
+
 
 }

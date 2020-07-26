@@ -21,7 +21,7 @@ import com.botka.data.set.visualizer.step.StepResult;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
 
 /**
- * Can not exstend from.
+ * Can not extend from.
  * Base class for the render engine.
  * Supports multiple UI frameworks through render interface vallbacks
  *
@@ -35,7 +35,7 @@ public final class RenderEngine
 	private AsyncOperation mThreadRunner;
 	private Render mRenderCallback;
 	private int mCyclesPerSecond;
-	private StepOperation mStepOperation;
+	private StepOperation mStepOperation; 
 	
 	/**
 	 * @param Render interface callback method
@@ -95,12 +95,14 @@ public final class RenderEngine
 		if (this.mStepOperation != null)
 		{
 			StepResult result = this.mStepOperation.onStep(step);
-			this.render();
+			
 			if (result.isDone())
 			{
 				System.out.println("Sort is done from step result");
 				this.haltRenderer();
 			}
+			else
+				this.render();
 		}
 		else
 		{
@@ -109,7 +111,9 @@ public final class RenderEngine
 		
 	}
 	
-	
+	/**
+	 * Stops the renderer
+	 */
 	public void haltRenderer()
 	{
 		if (this.mThreadRunner != null)
@@ -118,11 +122,17 @@ public final class RenderEngine
 		}
 	}
 	
+	/**
+	 * Resets the renderer
+	 */
 	public void restartRenderer()
 	{
 		this.startRenderer();
 	}
 	
+	/**
+	 * Starts the rednerer
+	 */
 	public void startRenderer()
 	{
 		this.mThreadRunner = new AsyncOperation();
@@ -146,9 +156,15 @@ public final class RenderEngine
 		}
 	}
 	
+	/**
+	 * 
+	 * Thread builder that handles background calculations to the dataset before rendering
+	 *
+	 * @author Jake Botka
+	 *
+	 */
 	private class AsyncOperation implements Runnable
 	{
-
 		private boolean mRunning;
 		private int mCyclesPerSec;
 		public AsyncOperation()
@@ -159,50 +175,51 @@ public final class RenderEngine
 		public void run()
 		{
 			mRunning = true;
-			long cycle = 0;
+
 			long loggedTime = System.currentTimeMillis();
-			long millisecondPerCycle = 1000 / mCyclesPerSec;
+			final long millisecondPerCycle = 1000 / mCyclesPerSec;
 			long timeRec = -1;
+			long deltaTime = 0;
 			int steps = 0;
 			 BlockingQueue<Runnable> queue = ExecuteInMainThreadManager.getInstance().getQueue();
-			while (mRunning)
+			while (!isHalted())
 			{
 				timeRec = System.currentTimeMillis() - loggedTime;
 				if (timeRec >= millisecondPerCycle)
 				{
-					//System.out.println(timeRec);
-					cycle = 0;
 					loggedTime = System.currentTimeMillis();
 					steps++;
-					final int stepCount = steps; // for enclosing viarable
-					 
-					 synchronized(queue) //ensures that other objects will block if accesssing object at same time
+					final int stepCount = steps; // for enclosing variable
+					synchronized(queue) //ensures that other objects will block if accessing object at same time
 					 {
 						 queue.add(new Runnable(){
 				                @Override
 				                public void run() {
-				                	onStep(stepCount);
-				                	ExecuteInMainThreadManager.getInstance().getTaskDoneFlag().set(true);
-				                	
+				                	if (!isHalted())
+				                	{
+					                	onStep(stepCount);
+					                	ExecuteInMainThreadManager.getInstance().getTaskDoneFlag().set(true);
+				                	}
 				                }
 				            });
-						 queue.notifyAll(); //notifiies moniter that queue is avaliable to access
+						 queue.notifyAll(); //Notifies monitor that queue is available to access
 					 }
-					 
-					 
-					
+					 deltaTime = System.currentTimeMillis() - loggedTime; // time difference between start and end execution
 				}
-				
-			}
-			
+			}	
 		}
 		
+		/**
+		 * Stops thread. Must be called by outer class
+		 */
 		public void stopThread()
 		{
 			mRunning = false;
 		}
 		
+		public boolean isHalted()
+		{
+			return !this.mRunning;
+		}
 	}
-	
-
 }

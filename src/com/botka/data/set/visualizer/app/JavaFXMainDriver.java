@@ -26,6 +26,9 @@ import com.botka.data.set.visualizer.readers.FileReader;
 import com.botka.data.set.visualizer.render.engine.RenderEngine;
 import com.botka.data.set.visualizer.sort.ArraySorter;
 import com.botka.data.set.visualizer.sort.BubbleSort;
+import com.botka.data.set.visualizer.sort.IFinishedListener;
+import com.botka.data.set.visualizer.sort.SelectionSort;
+import com.botka.data.set.visualizer.sort.Sort;
 import com.botka.data.set.visualizer.step.StepOperation;
 import com.botka.data.set.visualizer.visualizer.JavaFXVisualizer;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
@@ -43,10 +46,11 @@ import javafx.stage.Stage;
  * @author Jake Botka
  *
  */
-public class JavaFXMainDriver extends Application implements IRunOnMainThread
+public class JavaFXMainDriver extends Application implements IRunOnMainThread, IFinishedListener
 {
 
 	private  static final ExecuteInMainThreadManager MANAGER = ExecuteInMainThreadManager.getInstance();
+	private static Visualizer visualizer = null;
 	/**
 	 * @param command line arguments
 	 */
@@ -79,12 +83,16 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 		}
 		//insert data here end
 	
-		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
-		StepOperation stepOp = new BubbleSort(dataSet);
-		RenderEngine engine = new RenderEngine(visual,stepOp, 200);
+		visualizer = new JavaFXVisualizer(dataSet, stage, scene, canvas);
+		StepOperation stepOp =new BubbleSort(dataSet, this); // this being the IFInishedListener Implementation
+		 stepOp =new SelectionSort (dataSet, this); // this being the IFInishedListener Implementation
+		RenderEngine engine = new RenderEngine(visualizer,stepOp, 200);
+		
+		Sort sort = (Sort)stepOp;
+		visualizer.setPrefixTitle(sort.getAlgorithm());
 		
 		MANAGER.setMainThreadCallback(this);
-		visual.init();
+		visualizer.init();
 		engine.init();
 		
 		stage.setScene(scene);
@@ -113,7 +121,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 		//insert data here end
 	
 		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
-		StepOperation stepOp = new BubbleSort(dataSet);
+		StepOperation stepOp = new BubbleSort(dataSet, this); // this being the IFInishedListener Implementation
 		RenderEngine engine = new RenderEngine(visual,stepOp, 120);
 		
 		MANAGER.setMainThreadCallback(this);
@@ -137,7 +145,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 		
 		DataSet<Double> dataSet = readDataFromFile(file);
 		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
-		StepOperation stepOp = new BubbleSort(dataSet);
+		StepOperation stepOp = new BubbleSort(dataSet, this); // this being the IFInishedListener Implementation
 		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
 		
 		MANAGER.setMainThreadCallback(this);
@@ -209,6 +217,16 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread
 	public void runOnMainThread(Runnable run)
 	{
 		Platform.runLater(run); //javafx implementation of communicating to main thread
+		
+	}
+
+	@Override
+	public void onFinished()
+	{
+		if (visualizer != null)
+		{
+			visualizer.onFinished();
+		}
 		
 	}
 

@@ -24,6 +24,7 @@ public abstract class Sort extends StepOperation
 	private String mSortAlgorithm;
 	private DataSet<?> mDataSet;
 	private int mNumberOfSteps;
+	private IFinishedListener mFinishedListener;
 	/**
 	 * 
 	 */
@@ -34,9 +35,18 @@ public abstract class Sort extends StepOperation
 		this.mNumberOfSteps = numberOfSteps;
 		// TODO Auto-generated constructor stub
 	}
-	public abstract boolean canStep(int cucrrentStep);
-	public abstract SortStep onSortingStep(int step);
+	public abstract boolean canStep(int currentStep);
+	public abstract SortStep onSortingStep(int stepCount);
 	public abstract void sort();
+	
+	public void onFinished()
+	{
+		
+		if (this.mFinishedListener != null)
+		{
+			this.mFinishedListener.onFinished();
+		}
+	}
 	
 	/**
 	 * 
@@ -52,5 +62,14 @@ public abstract class Sort extends StepOperation
 		return this.mNumberOfSteps;
 	}
 	
+	public void registerOnFinishedListener(IFinishedListener listener)
+	{
+		this.mFinishedListener = listener;
+	}
+	
+	public String getAlgorithm()
+	{
+		return this.mSortAlgorithm;
+	}
 
 }
