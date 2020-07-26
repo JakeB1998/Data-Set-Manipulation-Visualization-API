@@ -8,11 +8,15 @@
  */
 package com.botka.data.set.visualizer.visualizer;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import com.botka.data.set.visualizer.app.JavaFXMainDriver;
 import com.botka.data.set.visualizer.data.DataSet;
+import com.botka.data.set.visualizer.sound.engine.IAudioListener;
+import com.botka.data.set.visualizer.sound.engine.IPlayAudio;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -26,13 +30,15 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- * <insert class description here>
+ * Integrated controller class for the JavaFX framework extending from abstract class: Visualizer
  *
  * @author Jake Botka
  *
@@ -114,6 +120,9 @@ public class JavaFXVisualizer extends Visualizer
 		if (this.mPrefixTitle == null)
 			this.setPrefixTitle("");
 		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+		 
+		 JavaFXMainDriver.AUDIO_ENGINE.registerAudioListener(new AudioHandlers());
+		 JavaFXMainDriver.AUDIO_ENGINE.registerPlayAudioListener(new AudioHandlers());
 	
 		this.mReady = this.checkIfReady();
 		if(mReady)
@@ -135,31 +144,29 @@ public class JavaFXVisualizer extends Visualizer
 				System.out.println("Infobox added");
 			}
 			
-		}
-	
-		DataSet<?> set = super.getWorkingDataSet();
-		if(set != null)
-		{
-			if (set.isNumberArray())
+			DataSet<?> set = super.getWorkingDataSet();
+			if(set != null)
 			{
-				
-				double max = set.parseValue(set.getMax());
-				double min = set.parseValue(set.getMin());
-				
-				
-				this.mScaleYFactor =  this.mCanvas.getHeight() / ((max - min)) ;
-				this.mScaleXFactor = this.mCanvas.getWidth() / set.size();
-				if (this.mScaleXFactor > MAX_SCALE_X)
-					this.mScaleXFactor = MAX_SCALE_X;
-				
-				while (this.mCanvas.getHeight() - this.mScaleYFactor * max < 0) //the value can not be represented in the current scale without cutting off screen
+				if (set.isNumberArray())
 				{
-					System.out.println("Scale factor was to large from the larges value at : " + this.mScaleYFactor);
-					this.mScaleYFactor /=  2;
+					
+					double max = set.parseValue(set.getMax());
+					double min = set.parseValue(set.getMin());
+					
+					
+					this.mScaleYFactor =  this.mCanvas.getHeight() / ((max - min)) ;
+					this.mScaleXFactor = this.mCanvas.getWidth() / set.size();
+					if (this.mScaleXFactor > MAX_SCALE_X)
+						this.mScaleXFactor = MAX_SCALE_X;
+					
+					while (this.mCanvas.getHeight() - this.mScaleYFactor * max < 0) //the value can not be represented in the current scale without cutting off screen
+					{
+						System.out.println("Scale factor was to large from the larges value at : " + this.mScaleYFactor);
+						this.mScaleYFactor /=  2;
+					}
 				}
 			}
-			
-		}
+		}	
 	}
 	
 	/**
@@ -288,16 +295,11 @@ public class JavaFXVisualizer extends Visualizer
 		//System.out.println("Drawing pointer");
 		int index = set.getPointerInfo().getPointerPosition();
 		System.out.println(index);
-		
-		
 		if (index < set.size() && index >= 0)
 		{
-			
 			@SuppressWarnings("rawtypes")
 			double value = set.parseValue((Comparable) set.get(index));
-			
 			double x = (index * this.mScaleXFactor);
-		
 			double y = this.mGroundY - this.mScaleYFactor * value;
 			double h = this.mCanvas.getHeight() - y;
 			System.out.println(x + "," + y + "," + h);
@@ -305,16 +307,12 @@ public class JavaFXVisualizer extends Visualizer
 			this.mContext.clearRect(x,y, this.mScaleXFactor, h);
 			this.mContext.fillRect(x,y, this.mScaleXFactor, h);
 			this.mContext.setFill(DEFAULT_BLOCK_COLOR);
-			
-			
 		}
 		else
 		{
 			System.err.print("Tying to access index out of bounds at index : " + index + " With size: " + set.size());
 		}
-		
 	}
-
 
 	/**
 	 * Draws on canvas at specific location with A color deriving from the interface: Paint
@@ -327,20 +325,16 @@ public class JavaFXVisualizer extends Visualizer
 	 */
 	public void drawAt(double x, double y, double w, double h, Color color, Color previousColor)
 	{
-		
 		if (color == null) // error by programmer
 			color = DEFAULT_BLOCK_COLOR;
 		
 		this.mContext.setFill(color);
 		this.mContext.fillRect(x, y, w, h);
 		
-		
 		if (previousColor != null) // does not want to revert back to color
 			this.mContext.setFill(previousColor);
-		
 	}
 	
-
 	/**
 	 * The animation that plays when the visualiztion is finished wether it is a sorting manipulation ro just a real team visualtion
 	 */
@@ -682,6 +676,13 @@ public class JavaFXVisualizer extends Visualizer
 	}
 	
 	
+	/**
+	 * 
+	 * <insert class description here>
+	 *
+	 * @author Jake Botka
+	 *
+	 */
 	private class InfoBox extends Label
 	{
 		public InfoBox()
@@ -690,6 +691,59 @@ public class JavaFXVisualizer extends Visualizer
 			
 		}
 	
+		
+	}
+	
+	/**
+	 * 
+	 * <insert class description here>
+	 *
+	 * @author Jake Botka
+	 *
+	 */
+	public class AudioHandlers implements IPlayAudio, IAudioListener
+	{
+
+		/**
+		 * 
+		 */
+		@Override
+		public boolean playAudio(File file)
+		{
+			System.out.println("Sound egine has reuest implementation to play audio");
+			try
+			{
+				Media sound = new Media(file.toURI().toString());
+				MediaPlayer player = new MediaPlayer(sound);
+				player.play();
+				return true;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			return false;
+		}
+
+		/**
+		 * 
+		 */
+		@Override
+		public void onAudioPlayed(long id)
+		{
+			System.out.println("Audio played, ID: " + String.valueOf(id));
+		}
+
+		/**
+		 * 
+		 */
+		@Override
+		public void onAudioCompleted(long id)
+		{
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 

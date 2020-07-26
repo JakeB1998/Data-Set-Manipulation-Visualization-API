@@ -29,6 +29,11 @@ import com.botka.data.set.visualizer.sort.BubbleSort;
 import com.botka.data.set.visualizer.sort.IFinishedListener;
 import com.botka.data.set.visualizer.sort.SelectionSort;
 import com.botka.data.set.visualizer.sort.Sort;
+import com.botka.data.set.visualizer.sound.engine.Audio;
+import com.botka.data.set.visualizer.sound.engine.AudioEngine;
+import com.botka.data.set.visualizer.sound.engine.AudioFile;
+import com.botka.data.set.visualizer.sound.engine.IAudioListener;
+import com.botka.data.set.visualizer.sound.engine.IPlayAudio;
 import com.botka.data.set.visualizer.step.StepOperation;
 import com.botka.data.set.visualizer.visualizer.JavaFXVisualizer;
 import com.botka.data.set.visualizer.visualizer.Visualizer;
@@ -38,6 +43,9 @@ import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 /**
@@ -51,6 +59,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread, I
 
 	private  static final ExecuteInMainThreadManager MANAGER = ExecuteInMainThreadManager.getInstance();
 	private static Visualizer visualizer = null;
+	public static final AudioEngine AUDIO_ENGINE = new AudioEngine();
 	/**
 	 * @param command line arguments
 	 */
@@ -84,16 +93,20 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread, I
 		//insert data here end
 	
 		visualizer = new JavaFXVisualizer(dataSet, stage, scene, canvas);
-		StepOperation stepOp =new BubbleSort(dataSet, this); // this being the IFInishedListener Implementation
+		
+		StepOperation stepOp = null;
+		stepOp = new BubbleSort(dataSet, this); // this being the IFInishedListener Implementation
 		 stepOp =new SelectionSort (dataSet, this); // this being the IFInishedListener Implementation
 		RenderEngine engine = new RenderEngine(visualizer,stepOp, 200);
-		
 		Sort sort = (Sort)stepOp;
 		visualizer.setPrefixTitle(sort.getAlgorithm());
 		
 		MANAGER.setMainThreadCallback(this);
 		visualizer.init();
 		engine.init();
+		Audio audioClip = (Audio)new AudioFile("ui-sfx.wav");
+		AUDIO_ENGINE.addAudioFile(audioClip);
+		AUDIO_ENGINE.playAudio(audioClip.getID());
 		
 		stage.setScene(scene);
 		stage.show();
@@ -229,5 +242,7 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread, I
 		}
 		
 	}
+	
+	
 
 }

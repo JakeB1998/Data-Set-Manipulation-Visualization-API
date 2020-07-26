@@ -202,9 +202,12 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	 */
 	public void swap(int index1, int index2)
 	{
+		
 		Object o1 = super.remove(index1);
 		Object o2 = super.remove(index2 - 1); //  - 1 due to remove shift);
+		this.getPointerInfo().setPointerPosition(index1);
 		super.add(index1, (T)o2);
+		this.getPointerInfo().setPointerPosition(index1);
 		super.add(index2, (T)o1);
 	}
 	
