@@ -422,6 +422,20 @@ public class JavaFXVisualizer extends Visualizer
 		this.mStarted = true;
 		
 	}
+	
+	@Override
+	public void onPause()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStop()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void onFinished()
@@ -761,6 +775,8 @@ public class JavaFXVisualizer extends Visualizer
 		}
 		
 	}
+
+
 
 
 

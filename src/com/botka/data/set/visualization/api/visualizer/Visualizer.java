@@ -48,6 +48,8 @@ public abstract class Visualizer implements Render
 	public abstract void onDataMoved(Object obj, int oldIndex, int newIndex);
 	
 	public abstract void onStart();
+	public abstract void onPause();
+	public abstract void onStop();
 	public abstract void onFinished();
 	public abstract String getTitle();
 	public abstract String getInfoBox1();

@@ -13,7 +13,7 @@ import com.botka.data.set.visualization.api.step.SortStep;
 import com.botka.data.set.visualization.api.step.StepResult;
 
 /**
- * <insert class description here>
+ * Seclection Sorty implementation ob abstract class: Sort
  *
  * @author Jake Botka
  *
@@ -22,7 +22,9 @@ public class SelectionSort extends Sort
 {
 
 	private int mSubArrayindex; // this is a virtual sub array
+	@SuppressWarnings("rawtypes")
 	private Comparable mCurrentMin;
+	
 	/**
 	 * @param sortAlgo
 	 * @param dataset
@@ -39,11 +41,11 @@ public class SelectionSort extends Sort
 
 	/**
 	 * 
+	 * @return true if the Sort can take another step, otherwise false.
 	 */
 	@Override
 	public boolean canStep(int currentStep)
 	{
-		boolean notSorted = false;
 		DataSet<Comparable> set = (DataSet<Comparable>) super.getDataSet();
 		if (set  != null)
 		{
@@ -62,13 +64,14 @@ public class SelectionSort extends Sort
 			
 		}
 		else
-			System.err.print("Dataset is null");
+			System.err.print(this.getClass().getName() + ": Dataset is null");
 		return currentStep < super.getMaxAmountOfSteps();
 	}
 
 	/**
 	 * 
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public SortStep onSortingStep(int stepCount)
 	{
