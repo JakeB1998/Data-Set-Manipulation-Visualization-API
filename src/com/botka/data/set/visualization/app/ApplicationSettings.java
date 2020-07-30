@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import com.botka.data.set.visualization.app.settings.AudioSettings;
+import com.botka.data.set.visualization.app.settings.LanguageSettings;
+import com.botka.data.set.visualization.app.settings.RenderSettings;
 import com.botka.data.set.visualization.app.settings.Settings;
 
 public class ApplicationSettings implements Serializable
@@ -31,7 +33,7 @@ public class ApplicationSettings implements Serializable
 	}
 	
 	/**
-	 * 
+	 * Constructor the deep copies another instance into this new instance
 	 * @param instance
 	 */
 	public ApplicationSettings(ApplicationSettings instance)
@@ -42,6 +44,18 @@ public class ApplicationSettings implements Serializable
 			this.mSettings = instance.getAllSettings();
 		}
 	}
+	
+
+	/**
+	 * Loads default setting objects
+	 */
+	private void loadDefaults()
+	{
+		this.addElement(new AudioSettings());
+		this.addElement(new RenderSettings());
+		this.addElement(new LanguageSettings(Language.English));
+	}
+	
 	
 	/**
 	 * 
@@ -73,14 +87,6 @@ public class ApplicationSettings implements Serializable
 		}
 		
 		return false;
-	}
-	
-	/**
-	 * Loads default setting objects
-	 */
-	private void loadDefaults()
-	{
-		this.addElement(new AudioSettings());
 	}
 	
 	/**
@@ -193,6 +199,32 @@ public class ApplicationSettings implements Serializable
 		if (this.mSettings != null)
 		{
 			return this.getSetting(AudioSettings.class);
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public LanguageSettings getLanguageSettings()
+	{
+		if (this.mSettings != null)
+		{
+			return this.getSetting(LanguageSettings.class);
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public RenderSettings getRenderSettings()
+	{
+		if (this.mSettings != null)
+		{
+			return this.getSetting(RenderSettings.class);
 		}
 		return null;
 	}

@@ -9,7 +9,7 @@
 package com.botka.data.set.visualization.app;
 
 /**
- * <insert class description here>
+ * Represents different languages
  *
  * @author Jake Botka
  *
