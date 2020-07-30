@@ -28,7 +28,7 @@ public class BubbleSort extends Sort
 	/**
 	 * @param sortAlgo
 	 */
-	public BubbleSort(DataSet set, IFinishedListener finishedListener)
+	public BubbleSort(DataSet<?> set, IFinishedListener finishedListener)
 	{
 		super(SORTING_ALGORITHM, set, Integer.MAX_VALUE);
 		super.registerOnFinishedListener(finishedListener);

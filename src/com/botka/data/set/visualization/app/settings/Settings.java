@@ -9,7 +9,7 @@
 package com.botka.data.set.visualization.app.settings;
 
 /**
- * <insert class description here>
+ * Base class for all settings
  *
  * @author Jake Botka
  *
@@ -23,6 +23,14 @@ public abstract class Settings
 	public Settings()
 	{
 		// TODO Auto-generated constructor stub
+	}
+	
+	/**
+	 * 
+	 */
+	public String toString()
+	{
+		return super.toString();
 	}
 
 }
