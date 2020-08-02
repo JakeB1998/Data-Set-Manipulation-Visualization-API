@@ -11,6 +11,7 @@
 package com.botka.data.set.visualization.api.visualizer;
 
 import com.botka.data.set.visualization.api.data.DataSet;
+import com.botka.data.set.visualization.api.data.IDataPeekListener;
 import com.botka.data.set.visualization.api.render.engine.Render;
 
 /**
@@ -52,14 +53,11 @@ public abstract class Visualizer implements Render
 	public abstract void onStop();
 	public abstract void onFinished();
 	public abstract String getTitle();
-	public abstract String getInfoBox1();
-	public abstract String getInfoBox2();
-	public abstract String getInfoBox3();
+
+	public abstract void registerOnDataPeekCallback(IDataPeekListener callback);
 	public abstract void setPrefixTitle(String prefixTitle);
 	public abstract void setTitle(String title);
-	public abstract void setInfoBox1(String info);
-	public abstract void setInfoBox2(String info);
-	public abstract void setInfoBox3(String info);
+
 	
 
 }

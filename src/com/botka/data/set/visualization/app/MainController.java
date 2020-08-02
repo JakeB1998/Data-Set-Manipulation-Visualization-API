@@ -12,6 +12,7 @@ import java.util.Random;
 
 import com.botka.data.set.visualization.api.IRunOnMainThread;
 import com.botka.data.set.visualization.api.data.DataSet;
+import com.botka.data.set.visualization.api.data.IDataPeekListener;
 import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import com.botka.data.set.visualization.api.render.engine.RenderEngine;
 import com.botka.data.set.visualization.api.sort.BubbleSort;
@@ -24,6 +25,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -33,7 +36,7 @@ import javafx.stage.Stage;
  * @author Jake Botka
  *
  */
-public class MainController implements IRunOnMainThread, IFinishedListener
+public class MainController implements IRunOnMainThread, IFinishedListener, IDataPeekListener<Number>
 {
 
 	private Stage mStage;
@@ -43,6 +46,10 @@ public class MainController implements IRunOnMainThread, IFinishedListener
 	@FXML
 	VBox mainNode;
 	@FXML
+	VBox mainDetailsView;
+	@FXML
+	ScrollPane scrollPane;
+	@FXML
 	Canvas canvas;
 
 	@FXML
@@ -51,6 +58,9 @@ public class MainController implements IRunOnMainThread, IFinishedListener
 	
 	}
 	
+	/**
+	 * Inits after the setParams method is called
+	 */
 	private void init()
 	{
 		DataSet<Double> dataSet = new DataSet(0);
@@ -66,13 +76,19 @@ public class MainController implements IRunOnMainThread, IFinishedListener
 		 mVisualizer = new JavaFXVisualizer(dataSet, this.mStage, this.mScene, canvas);
 		StepOperation stepOp = new BubbleSort(dataSet, this);
 		RenderEngine engine = new RenderEngine(mVisualizer,stepOp, 45);
+		this.mVisualizer.registerOnDataPeekCallback(this);
 		
 		AppDriver.MANAGER.setMainThreadCallback(this);
 		mVisualizer.init();
 		engine.init();
+		
 	}
 	
-	
+	/**
+	 * 
+	 * @param stage
+	 * @param scene
+	 */
 	public void setParams(Stage stage, Scene scene)
 	{
 		ConsoleLogger.Logger.log(getClass(), "ParamsSet", true);
@@ -96,6 +112,15 @@ public class MainController implements IRunOnMainThread, IFinishedListener
 		{
 			mVisualizer.onFinished();
 		}
+		
+	}
+
+	@Override
+	public void onPeak(Number data)
+	{
+		String value = Double.toString(data.doubleValue());
+		ConsoleLogger.Logger.log(getClass(), "Data peeked: " + value, true);
+		mainDetailsView.getChildren().add(new Label(value));
 		
 	}
 

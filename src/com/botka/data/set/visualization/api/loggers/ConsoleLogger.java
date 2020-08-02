@@ -138,9 +138,9 @@ public class ConsoleLogger extends Logger implements ILogger
 			
 			String log = "";
 			if (logTime)
-				log+= LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME) + ":\t";
+				log+= LocalTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME) + ": ";
 			if (c != null)
-				log += c.getName() + ": \t";
+				log += c.getName() + ": ";
 			if (message != null)
 				log += message;
 			

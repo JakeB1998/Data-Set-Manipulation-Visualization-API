@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 import com.botka.data.set.visualization.api.data.DataSet;
+import com.botka.data.set.visualization.api.data.IDataPeekListener;
 import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import com.botka.data.set.visualization.api.sound.engine.IAudioListener;
 import com.botka.data.set.visualization.api.sound.engine.IPlayAudio;
@@ -63,9 +64,9 @@ public class JavaFXVisualizer extends Visualizer
 	
 	private String mPrefixTitle;
 	private String mTitle;
-	private String mInfoBox1;
-	private String mInfoBox2;
-	private String mInfoBox3;
+	
+	private IDataPeekListener mDataPeekListener;
+
 	
 
 	/**
@@ -117,9 +118,6 @@ public class JavaFXVisualizer extends Visualizer
 		this.mGroundX = this.mCanvas != null ? 0 : -1;
 		this.mGroundY = this.mCanvas != null ? (int) this.mCanvas.getHeight() : -1;
 		this.setTitle("JavaFX Implementation Data Set Visuliztion");
-		this.setInfoBox1("");
-		this.setInfoBox2("");
-		this.setInfoBox3("");
 		if (this.mPrefixTitle == null)
 			this.setPrefixTitle("");
 		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -130,22 +128,7 @@ public class JavaFXVisualizer extends Visualizer
 		this.mReady = this.checkIfReady();
 		if(mReady)
 		{
-			this.initCanvasSettings();
-			this.mCanvas.setWidth(screenBounds.getWidth());
-			this.mCanvas.setHeight(screenBounds.getHeight() - 100);
-			//this.mStage.setResizable(false);
-			Parent parent = this.mScene.getRoot();
-			if (parent instanceof Group)
-			{
-				Group root = (Group)parent;
-				InfoBox infoBox = new InfoBox();
-				double width = this.mCanvas != null ? this.mCanvas.getWidth() : 0.0;
-				infoBox.setText("I am Jeff");
-				infoBox.setLayoutX(width -  (width * 0.2));
-				infoBox.setLayoutY(100);
-				root.getChildren().add(infoBox);
-				System.out.println("Infobox added");
-			}
+			
 			
 			DataSet<?> set = super.getWorkingDataSet();
 			if(set != null)
@@ -171,6 +154,8 @@ public class JavaFXVisualizer extends Visualizer
 			}
 		}	
 	}
+	
+	
 	
 	/**
 	 * Inits the canvas settings
@@ -262,11 +247,13 @@ public class JavaFXVisualizer extends Visualizer
 						if (set.isNumber(o))
 						{
 							value = set.parseValue(o);
-							this.setInfoBox1("Value at Pointer: " + String.valueOf(df.format(value)));
 							y-= value * this.mScaleYFactor;
 						}
 						else // if not a number
 							y = i * this.mScaleYFactor;
+						
+						if (this.mDataPeekListener != null)
+							this.mDataPeekListener.onPeak(o);
 					
 						
 						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
@@ -508,6 +495,11 @@ public class JavaFXVisualizer extends Visualizer
 		
 		//TODO : Finish method
 	}
+	
+	public void registerOnDataPeekCallback(IDataPeekListener callback)
+	{
+		this.mDataPeekListener = callback;
+	}
 
 	/**
 	 * @return the mScaleXFactor
@@ -569,53 +561,7 @@ public class JavaFXVisualizer extends Visualizer
 		//this.drawTitle();
 	}
 
-	/**
-	 * @return the mInfoBox1
-	 */
-	public String getInfoBox1()
-	{
-		return mInfoBox1;
-	}
-
-	/**
-	 * @param mInfoBox1 the mInfoBox1 to set
-	 */
-	public void setInfoBox1(String infoBox1)
-	{
-		this.mInfoBox1 = infoBox1;
-	}
-
-	/**
-	 * @return the mInfoBox2
-	 */
-	public String getInfoBox2()
-	{
-		return mInfoBox2;
-	}
-
-	/**
-	 * @param mInfoBox2 the mInfoBox2 to set
-	 */
-	public void setInfoBox2(String infoBox2)
-	{
-		this.mInfoBox2 = infoBox2;
-	}
-
-	/**
-	 * @return the mInfoBox3
-	 */
-	public String getInfoBox3()
-	{
-		return mInfoBox3;
-	}
-
-	/**
-	 * @param mInfoBox3 the mInfoBox3 to set
-	 */
-	public void setInfoBox3(String infoBox3)
-	{
-		this.mInfoBox3 = infoBox3;
-	}
+	
 
 	/**
 	 * @return the mStage
@@ -714,23 +660,8 @@ public class JavaFXVisualizer extends Visualizer
 	}
 	
 	
-	/**
-	 * 
-	 * <insert class description here>
-	 *
-	 * @author Jake Botka
-	 *
-	 */
-	private class InfoBox extends Label
-	{
-		public InfoBox()
-		{
-			super();
-			
-		}
+
 	
-		
-	}
 	
 	/**
 	 * 
@@ -784,9 +715,4 @@ public class JavaFXVisualizer extends Visualizer
 		}
 		
 	}
-
-
-
-
-
 }

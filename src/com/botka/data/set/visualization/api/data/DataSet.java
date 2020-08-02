@@ -21,11 +21,13 @@ import java.util.ArrayList;
 public class DataSet<T extends Comparable> extends ArrayList<T>
 {
 
+	private final DataSetHistoryRecorder RECORDER = new DataSetHistoryRecorder();
 	private Object[] mArr;
 	private boolean mNumber;
 	private T mMax;
 	private T mMin;
 	private DataSetPointer mDataSetIteratorInfo;
+	private DataSetHistory mHistory;
 	private int mComparrisons;
 	/**
 	 * Main constructor
@@ -222,6 +224,15 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	public DataSetPointer getPointerInfo()
 	{
 		return this.mDataSetIteratorInfo;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public DataSetHistory getHistory()
+	{
+		return this.mHistory;
 	}
 	
 	/**
