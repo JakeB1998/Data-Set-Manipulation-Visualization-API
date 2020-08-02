@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.util.Random;
 
 import com.botka.data.set.visualization.api.ExecuteInMainThreadManager;
@@ -22,13 +23,16 @@ import com.botka.data.set.visualization.api.render.engine.RenderEngine;
 import com.botka.data.set.visualization.api.sort.ArraySorter;
 import com.botka.data.set.visualization.api.sort.BubbleSort;
 import com.botka.data.set.visualization.api.sort.IFinishedListener;
+import com.botka.data.set.visualization.api.sound.engine.AudioEngine;
 import com.botka.data.set.visualization.api.step.StepOperation;
 import com.botka.data.set.visualization.api.visualizer.JavaFXVisualizer;
 import com.botka.data.set.visualization.api.visualizer.Visualizer;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Stage;
@@ -43,7 +47,11 @@ import javafx.stage.Stage;
 public class AppDriver extends Application implements IRunOnMainThread, IFinishedListener
 {
 
-	private  static final ExecuteInMainThreadManager MANAGER = ExecuteInMainThreadManager.getInstance();
+	public  static final ExecuteInMainThreadManager MANAGER = ExecuteInMainThreadManager.getInstance();
+	private static Visualizer visualizer = null;
+	public static final AudioEngine AUDIO_ENGINE = new AudioEngine();
+	public static final ApplicationSettings APP_SETTINGS = new ApplicationSettings(null);
+	
 	/**
 	 * @param command line arguments
 	 */
@@ -60,36 +68,26 @@ public class AppDriver extends Application implements IRunOnMainThread, IFinishe
 	@Override
 	public void start(Stage stage) throws Exception
 	{
-		Scene scene = null;
-		Canvas canvas = new Canvas(1000,1000);
-		Group root = new Group();
-		root.getChildren().add(canvas);
-		scene = new Scene(root);
-		
-		DataSet<Double> dataSet = new DataSet(0);
-		
-		// insert data here start
-		Random ran = new Random();
-		for (int i = 0; i < 1000; i++) // generates random data
+		try
 		{
-			dataSet.add(ran.nextDouble() * 100);
-		}
-		//insert data here end
-	
-		Visualizer visual = new JavaFXVisualizer(dataSet, stage, scene, canvas);
-		StepOperation stepOp = new BubbleSort(dataSet, this);
-		RenderEngine engine = new RenderEngine(visual,stepOp, 45);
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("app.fxml"));
+		Parent root = (Parent)fxmlLoader.load();
+		MainController controller = fxmlLoader.<MainController>getController();
 		
-		MANAGER.setMainThreadCallback(this);
-		visual.init();
-		engine.init();
+		Scene scene = null;
+		scene = new Scene(root);
+		controller.setParams(stage, scene);
+	
 		
 		stage.setScene(scene);
 		stage.show();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 		
-		
-		//objectSortTest();
 	}
 	
 	@Override

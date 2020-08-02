@@ -11,10 +11,17 @@ package com.botka.data.set.visualization.app;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -22,6 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.botka.data.set.visualization.api.ExecuteInMainThreadManager;
 import com.botka.data.set.visualization.api.IRunOnMainThread;
 import com.botka.data.set.visualization.api.data.DataSet;
+import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import com.botka.data.set.visualization.api.readers.FileReader;
 import com.botka.data.set.visualization.api.render.engine.RenderEngine;
 import com.botka.data.set.visualization.api.sort.ArraySorter;
@@ -122,10 +130,13 @@ public class JavaFXMainDriver extends Application implements IRunOnMainThread, I
 		}
 		
 		
-		
+	
 		//objectSortTest();
 	}
 	
+	
+	
+
 	/**
 	 * Option 1 is driven by randoimly generated data
 	 * @param stage

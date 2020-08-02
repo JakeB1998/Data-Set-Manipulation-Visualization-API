@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 import com.botka.data.set.visualization.api.data.DataSet;
+import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import com.botka.data.set.visualization.api.sound.engine.IAudioListener;
 import com.botka.data.set.visualization.api.sound.engine.IPlayAudio;
 import com.botka.data.set.visualization.app.JavaFXMainDriver;
@@ -88,7 +89,7 @@ public class JavaFXVisualizer extends Visualizer
 	{
 		this(dataSet, stage);
 		this.mScene = scene;
-		this.mStage.setScene(this.mScene);
+		
 	}
 	
 
@@ -208,14 +209,21 @@ public class JavaFXVisualizer extends Visualizer
 	 */
 	public String checkErrorCode()
 	{
+		String error = "";
 		if (this.mReady)
 		{
 			return "No error";
 		}
 		else
 		{
-			//TODO: Implement error code method
-			return "Method not implemented yet";
+			error += "Error Summary:";
+			error += "\nStage: ";
+			error += this.mStage != null ? "Not null" : "Null";
+			error += "\nScene: ";
+			error += this.mScene != null ? "Not null" : "Null";
+			error += "\nCanvas: ";
+			error += this.mCanvas != null ? "Not null" : "Null";
+			return error;
 		}
 	}
 
@@ -278,6 +286,7 @@ public class JavaFXVisualizer extends Visualizer
 		else
 		{
 			System.err.println(this.getClass().getName() + ": There is a vairbale that is null, Call the check error code method for more information");
+			ConsoleLogger.Logger.log(getClass(), this.checkErrorCode(), true);
 		}
 		
 	}
@@ -376,11 +385,10 @@ public class JavaFXVisualizer extends Visualizer
 			int cycles = 0; // current count of cycles
 			double value = Double.NaN; // value to be used to scale the ui elements
 			double a = mScaleXFactor / cyclesPerIndex;
-		    @SuppressWarnings("deprecation")
-			@Override
+		    @Override
 		    public void handle(ActionEvent event) 
 		    {
-		    	if (cycles % cyclesPerIndex == 0 )
+		    	if (cycles % cyclesPerIndex == 0)
 		    	{
 					if (iterator.hasNext())
 					{
@@ -395,7 +403,8 @@ public class JavaFXVisualizer extends Visualizer
 						}
 						else // if not a number
 							y = p * mScaleYFactor;
-		
+						
+						gc.strokeRect(x, y, a, mCanvas.getHeight() - y); // strokes outline
 						set.getPointerInfo().setPointerPosition(p + 1);
 					}
 		    	}
