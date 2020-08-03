@@ -232,7 +232,12 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	 */
 	public DataSetHistory getHistory()
 	{
-		return this.mHistory;
+		return RECORDER.getHistory();
+	}
+	
+	public synchronized void recordDataSet()
+	{
+		RECORDER.addHistroy(this);
 	}
 	
 	/**

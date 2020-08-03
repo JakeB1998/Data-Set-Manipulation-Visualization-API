@@ -3,7 +3,7 @@ package com.botka.data.set.visualization.api.loggers;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class ConsoleLogger extends Logger implements ILogger
+public class ConsoleLogger extends Logger implements Logging
 {
 	private boolean mLogTimePermission;
 	/**

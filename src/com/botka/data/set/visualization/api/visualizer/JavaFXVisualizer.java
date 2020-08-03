@@ -13,8 +13,9 @@ import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import com.botka.data.set.visualization.api.data.DataPeekListener;
 import com.botka.data.set.visualization.api.data.DataSet;
-import com.botka.data.set.visualization.api.data.IDataPeekListener;
+
 import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import com.botka.data.set.visualization.api.sound.engine.IAudioListener;
 import com.botka.data.set.visualization.api.sound.engine.IPlayAudio;
@@ -65,7 +66,7 @@ public class JavaFXVisualizer extends Visualizer
 	private String mPrefixTitle;
 	private String mTitle;
 	
-	private IDataPeekListener mDataPeekListener;
+	private DataPeekListener mDataPeekListener;
 
 	
 
@@ -212,14 +213,25 @@ public class JavaFXVisualizer extends Visualizer
 		}
 	}
 
-	DecimalFormat df = new DecimalFormat("0.00##");
+	private DecimalFormat df = new DecimalFormat("0.00##");
 	
+	
+	@Override
 	/**
 	 * Overridden from Interface implementation of superclass
 	 * Called on each frame rendered with this framework implementation of JAVAFX front end frame work
 	 */
-	@Override
 	public void onRender()
+	{
+		this.render(getWorkingDataSet());
+	}
+	
+
+	@Override
+	/**
+	 * 
+	 */
+	public void render(DataSet<? extends Comparable> set)
 	{
 		//System.out.println(Thread.currentThread().getName());
 		if (this.mReady)
@@ -231,7 +243,6 @@ public class JavaFXVisualizer extends Visualizer
 			{
 				System.out.println("On rendered");
 				this.clearCanvas();
-			 DataSet<?> set = super.getWorkingDataSet();
 				Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
 				double x = this.mGroundX - this.mScaleXFactor;
 	
@@ -239,6 +250,7 @@ public class JavaFXVisualizer extends Visualizer
 				{
 					if (iterator.hasNext())
 					{
+						set.recordDataSet();
 						Object o = iterator.next();
 						x = i* this.mScaleXFactor;
 						double y = this.mGroundY;
@@ -253,7 +265,7 @@ public class JavaFXVisualizer extends Visualizer
 							y = i * this.mScaleYFactor;
 						
 						if (this.mDataPeekListener != null)
-							this.mDataPeekListener.onPeak(o);
+							this.mDataPeekListener.onPeak(i ,o);
 					
 						
 						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
@@ -275,6 +287,7 @@ public class JavaFXVisualizer extends Visualizer
 			System.err.println(this.getClass().getName() + ": There is a vairbale that is null, Call the check error code method for more information");
 			ConsoleLogger.Logger.log(getClass(), this.checkErrorCode(), true);
 		}
+		
 		
 	}
 	/**
@@ -496,7 +509,7 @@ public class JavaFXVisualizer extends Visualizer
 		//TODO : Finish method
 	}
 	
-	public void registerOnDataPeekCallback(IDataPeekListener callback)
+	public void registerOnDataPeekCallback(DataPeekListener callback)
 	{
 		this.mDataPeekListener = callback;
 	}
@@ -715,4 +728,7 @@ public class JavaFXVisualizer extends Visualizer
 		}
 		
 	}
+
+
+
 }

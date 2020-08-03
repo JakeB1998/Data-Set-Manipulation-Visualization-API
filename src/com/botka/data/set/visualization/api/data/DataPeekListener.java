@@ -14,8 +14,10 @@ package com.botka.data.set.visualization.api.data;
  * @author Jake Botka
  *
  */
-public interface IDataPeekListener<T>
+public interface DataPeekListener<T>
 {
-	void onPeak(T data);
+	
+
+	void onPeak(int index, T data);
 
 }

@@ -10,6 +10,8 @@ package com.botka.data.set.visualization.api.data;
 
 import java.util.ArrayList;
 
+import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
+
 /**
  * This will hold coppies of a dataset
  *
@@ -31,7 +33,11 @@ public class DataSetHistory
 	
 	public void addHistory(DataSet set)
 	{
-		this.mHistroy.add(set);
+		if (this.mHistroy != null)
+		{
+			this.mHistroy.add(set);
+			ConsoleLogger.Logger.log(getClass(), "Data set weas recorded into histroy", true);
+		}
 	}
 	
 	public DataSet<?> get(int index)

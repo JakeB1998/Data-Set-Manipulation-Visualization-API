@@ -210,7 +210,7 @@ public class FileLogger extends Logger
 	 * 
 	 * @return
 	 */
-	public DateTimeFormatter getTimeFormat()
+	public DateTimeFormatter getFormat()
 	{
 		return mTimeFormat;
 	}

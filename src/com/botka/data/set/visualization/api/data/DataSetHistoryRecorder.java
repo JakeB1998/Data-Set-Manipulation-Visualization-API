@@ -18,6 +18,7 @@ public class DataSetHistoryRecorder
 {
 
 	private DataSetHistory mHistory;
+	
 	/**
 	 * 
 	 */
@@ -26,11 +27,19 @@ public class DataSetHistoryRecorder
 		this.mHistory = new DataSetHistory();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public DataSetHistory getHistory()
 	{
 		return this.mHistory;
 	}
 	
+	/**
+	 * 
+	 * @param set
+	 */
 	public void addHistroy(DataSet<?> set)
 	{
 		if (this.mHistory != null)

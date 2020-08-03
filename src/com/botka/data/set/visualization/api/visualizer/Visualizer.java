@@ -11,7 +11,7 @@
 package com.botka.data.set.visualization.api.visualizer;
 
 import com.botka.data.set.visualization.api.data.DataSet;
-import com.botka.data.set.visualization.api.data.IDataPeekListener;
+import com.botka.data.set.visualization.api.data.DataPeekListener;
 import com.botka.data.set.visualization.api.render.engine.Render;
 
 /**
@@ -42,6 +42,7 @@ public abstract class Visualizer implements Render
 	
 	public abstract void init();
 	public abstract void drawPointer(DataSet<?> set);
+	public abstract void render(DataSet<? extends Comparable> set);
 	public abstract void onFinishedAnimation();
 	public abstract void onDataChanged(Object oldObj, Object newObj, int oldIndex, int newIndex); // multiple interperations of parameters
 	public abstract void onDataAdded(Object newObj, int index, boolean sizeIncreased);
@@ -54,7 +55,7 @@ public abstract class Visualizer implements Render
 	public abstract void onFinished();
 	public abstract String getTitle();
 
-	public abstract void registerOnDataPeekCallback(IDataPeekListener callback);
+	public abstract void registerOnDataPeekCallback(DataPeekListener callback);
 	public abstract void setPrefixTitle(String prefixTitle);
 	public abstract void setTitle(String title);
 
