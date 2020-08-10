@@ -2,13 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -36,34 +36,45 @@
             <MenuItem fx:id="exitBtn" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
+            <Menu fx:id="runMenu1" mnemonicParsing="false" text="Load">
+               <items>
+                  <MenuItem fx:id="fileLoadMenuItem" mnemonicParsing="false" text="Load from ffile" />
+               </items>
+            </Menu>
+            <Menu fx:id="runMenu" mnemonicParsing="false" text="Run">
+              <items>
+                <MenuItem fx:id="startMenuItem" mnemonicParsing="false" text="Start" />
+                  <MenuItem fx:id="stopMenuItem" mnemonicParsing="false" text="Stop" />
+                  <MenuItem fx:id="pauseMenuItem" mnemonicParsing="false" text="Pause" />
+                  <MenuItem fx:id="resumeMenuItem" mnemonicParsing="false" text="Resume" />
+              </items>
+            </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About App" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.8" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-      <items>
-        <AnchorPane>
-          <children>
-            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" wrapText="false">
-                     <textFill>
-                        <Color blue="0.624" green="0.624" red="0.624" fx:id="x5" />
-                     </textFill>
-                     <font>
-                        <Font size="18.0" fx:id="x6" />
-                     </font></Label>
-                  <Canvas fx:id="canvas" height="701.0" width="795.0" />
-          </children>
-        </AnchorPane>
-        <ScrollPane fx:id="scrollPane" prefHeight="554.0" prefWidth="379.0">
+  <AnchorPane>
+    <children>
+        <ScrollPane fx:id="scrollPane" prefHeight="701.0" prefWidth="174.0" AnchorPane.rightAnchor="0.0">
                <content>
                   <VBox fx:id="mainDetailsView" spacing="10.0" />
                </content>
         </ScrollPane>
-      </items>
-    </SplitPane>
+      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" wrapText="false">
+               <textFill>
+                  <Color blue="0.624" green="0.624" red="0.624" fx:id="x5" />
+               </textFill>
+               <font>
+                  <Font size="18.0" fx:id="x6" />
+               </font>
+            </Label>
+            <Canvas fx:id="canvas" height="701.0" width="795.0" />
+            <Button fx:id="collapseBtn" mnemonicParsing="false" text="C" AnchorPane.rightAnchor="0.0" />
+    </children>
+  </AnchorPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
       <children>
         <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">

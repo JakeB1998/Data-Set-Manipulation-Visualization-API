@@ -51,16 +51,17 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	/**
 	 * Constructor that accepts an array of data to be comppied into the dynamic arraylist
 	 * @param array with the type of T
+	 * @throws NullPointerException
 	 */
 	public DataSet(T[] arr)
 	{
 		this(arr.length);
-		
 		for (int i = 0; i < arr.length; i++)
 		{
 			super.add(arr[i]);
 		}
 	}
+	
 	
 	/**
 	 * Determines if the entire generic array is type safed with numerical values.

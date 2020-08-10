@@ -36,9 +36,9 @@ public class ExitButtonHandler implements EventHandler<ActionEvent>, Serializabl
 	private static final long serialVersionUID = -107077907428293204L;
 	private static final File FILE = new File("exitButtonEventCount" + ".txt");
 	private AtomicInteger mEventCount;
-	
+	 
 	/**
-	 * 
+	 * Constructor
 	 */
 	public ExitButtonHandler()
 	{
@@ -59,6 +59,9 @@ public class ExitButtonHandler implements EventHandler<ActionEvent>, Serializabl
 	}
 
 	@Override
+	/**
+	 * Event handler implementation
+	 */
 	public void handle(ActionEvent event)
 	{
 		this.mEventCount.incrementAndGet();

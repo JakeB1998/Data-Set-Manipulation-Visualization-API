@@ -83,8 +83,6 @@ public final class RenderEngine
 	{
 		 // if null then assign default otherwise keep same
 		this.mCyclesPerSecond = this.mCyclesPerSecond == -1 ? DEFAULT_CYCLES_PER_SECOND : this.mCyclesPerSecond;
-		this.startRenderer();
-		
 	}
 	
 	/**

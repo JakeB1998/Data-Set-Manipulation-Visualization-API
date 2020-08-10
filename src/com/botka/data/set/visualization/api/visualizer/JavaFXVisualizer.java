@@ -54,7 +54,7 @@ public class JavaFXVisualizer extends Visualizer
 	private Canvas mCanvas;
 	private GraphicsContext mContext;
 	private double mGroundX, mGroundY,  mScaleXFactor, mScaleYFactor;
-	private boolean mReady, mStarted;
+	private boolean mReady, mInitialized,mStarted, mRunning, mStopped, mPaused;
 	
 	private final Color DEFAULT_BLOCK_COLOR = Color.GREY;
 	private final Color DEFAULT_BLOCK_STROKE_COLOR = Color.WHITESMOKE;
@@ -153,7 +153,9 @@ public class JavaFXVisualizer extends Visualizer
 					}
 				}
 			}
-		}	
+		}
+		
+		this.mInitialized = true;
 	}
 	
 	
@@ -233,7 +235,7 @@ public class JavaFXVisualizer extends Visualizer
 	 */
 	public void render(DataSet<? extends Comparable> set)
 	{
-		//System.out.println(Thread.currentThread().getName());
+		
 		if (this.mReady)
 		{
 			if (!this.mStarted)
@@ -241,42 +243,7 @@ public class JavaFXVisualizer extends Visualizer
 			
 			if (this.mStage.isShowing())
 			{
-				System.out.println("On rendered");
-				this.clearCanvas();
-				Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
-				double x = this.mGroundX - this.mScaleXFactor;
-	
-				for (int i =0 ; i < set.size(); i++)
-				{
-					if (iterator.hasNext())
-					{
-						set.recordDataSet();
-						Object o = iterator.next();
-						x = i* this.mScaleXFactor;
-						double y = this.mGroundY;
-						double value = Double.NaN;
-						
-						if (set.isNumber(o))
-						{
-							value = set.parseValue(o);
-							y-= value * this.mScaleYFactor;
-						}
-						else // if not a number
-							y = i * this.mScaleYFactor;
-						
-						if (this.mDataPeekListener != null)
-							this.mDataPeekListener.onPeak(i ,o);
-					
-						
-						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
-						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
-						
-						//TODO: Render text;
-						//this.drawUI();
-						
-					}
-				
-				}
+				this.renderData(set);
 				
 				this.drawPointer(set); // draws the position of the pointer
 				this.handleUI();
@@ -289,6 +256,45 @@ public class JavaFXVisualizer extends Visualizer
 		}
 		
 		
+	}
+	
+	public void renderData(DataSet<? extends Comparable> set)
+	{
+		System.out.println("On rendered");
+		this.clearCanvas();
+		Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
+		double x = this.mGroundX - this.mScaleXFactor;
+
+		for (int i =0 ; i < set.size(); i++)
+		{
+			if (iterator.hasNext())
+			{
+				set.recordDataSet();
+				Object o = iterator.next();
+				x = i* this.mScaleXFactor;
+				double y = this.mGroundY;
+				double value = Double.NaN;
+				
+				if (set.isNumber(o))
+				{
+					value = set.parseValue(o);
+					y-= value * this.mScaleYFactor;
+				}
+				else // if not a number
+					y = i * this.mScaleYFactor;
+				
+				if (this.mDataPeekListener != null)
+					this.mDataPeekListener.onPeak(i ,o);
+			
+				
+				this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
+				this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
+				
+				//TODO: Render text;
+				//this.drawUI();
+				
+			}
+		}
 	}
 	/**
 	 * Handles the textual UI
@@ -427,25 +433,43 @@ public class JavaFXVisualizer extends Visualizer
 	@Override
 	public void onStart()
 	{
-		System.out.println("Visualization started");
+		ConsoleLogger.Logger.log(getClass(),"Visualization started", true);
 		this.mStarted = true;
+		this.render(getWorkingDataSet());
+		
 		
 	}
 	
 	@Override
 	public void onPause()
 	{
-		// TODO Auto-generated method stub
+		this.mPaused =  true;
+		this.mRunning = false;
 		
 	}
 
 	@Override
 	public void onStop()
 	{
-		// TODO Auto-generated method stub
-		
+		this.mStopped = true;
+		this.mRunning = false;
+	}
+	
+	@Override
+	public void onResume()
+	{
+		this.mStopped = false;
+		this.mPaused = false;
+		this.mRunning = true;
 	}
 
+	@Override
+	public boolean isRunning()
+	{
+		// TODO Auto-generated method stub
+		return this.mRunning;
+	
+	}
 	@Override
 	public void onFinished()
 	{
@@ -536,6 +560,24 @@ public class JavaFXVisualizer extends Visualizer
 	public boolean isReady()
 	{
 		return mReady;
+	}
+	
+	@Override
+	public boolean isInitialized()
+	{
+		return this.mInitialized;
+	}
+
+	@Override
+	public boolean isStopped()
+	{
+		return this.mStopped;
+	}
+
+	@Override
+	public boolean isPaused()
+	{
+		return this.mPaused;
 	}
 
 	/**
@@ -731,4 +773,12 @@ public class JavaFXVisualizer extends Visualizer
 
 
 
+
+
+	
+
 }
+
+
+
+

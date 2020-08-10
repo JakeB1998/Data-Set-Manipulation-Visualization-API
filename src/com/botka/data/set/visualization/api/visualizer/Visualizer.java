@@ -11,6 +11,7 @@
 package com.botka.data.set.visualization.api.visualizer;
 
 import com.botka.data.set.visualization.api.data.DataSet;
+import com.botka.data.set.visualization.api.LifeCycleCallbackListener;
 import com.botka.data.set.visualization.api.data.DataPeekListener;
 import com.botka.data.set.visualization.api.render.engine.Render;
 
@@ -20,7 +21,7 @@ import com.botka.data.set.visualization.api.render.engine.Render;
  * @author Jake Botka
  *
  */
-public abstract class Visualizer implements Render
+public abstract class Visualizer implements Render, LifeCycleCallbackListener
 {
 	
 
@@ -40,6 +41,33 @@ public abstract class Visualizer implements Render
 		return this.mDataset;
 	}
 	
+	/**
+	 * 
+	 * @param Input Dataset
+	 */
+	private void setWorkingDataset(DataSet set)
+	{
+		this.mDataset = set;
+	}
+	
+	/**
+	 * Inserts data into visualzier
+	 * @param set
+	 */
+	public void insertData(DataSet set)
+	{
+		boolean initialized = this.isInitialized();
+		if (initialized)
+			if (this.isRunning())
+				this.onStop();
+		this.setWorkingDataset(set);
+		if (initialized)
+			this.onStart();
+		else
+			this.init();
+		
+	}
+	
 	public abstract void init();
 	public abstract void drawPointer(DataSet<?> set);
 	public abstract void render(DataSet<? extends Comparable> set);
@@ -49,10 +77,8 @@ public abstract class Visualizer implements Render
 	public abstract void onDataRemoved(Object oldObj, int index, boolean sizeDecreased);
 	public abstract void onDataMoved(Object obj, int oldIndex, int newIndex);
 	
-	public abstract void onStart();
-	public abstract void onPause();
-	public abstract void onStop();
-	public abstract void onFinished();
+	
+	
 	public abstract String getTitle();
 
 	public abstract void registerOnDataPeekCallback(DataPeekListener callback);
