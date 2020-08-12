@@ -123,8 +123,7 @@ public class JavaFXVisualizer extends Visualizer
 			this.setPrefixTitle("");
 		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 		 
-		 //JavaFXMainDriver.AUDIO_ENGINE.registerAudioListener(new AudioHandlers());
-		 //JavaFXMainDriver.AUDIO_ENGINE.registerPlayAudioListener(new AudioHandlers());
+		 
 	
 		this.mReady = this.checkIfReady();
 		if(mReady)
@@ -715,61 +714,6 @@ public class JavaFXVisualizer extends Visualizer
 	}
 	
 	
-
-	
-	
-	/**
-	 * 
-	 * <insert class description here>
-	 *
-	 * @author Jake Botka
-	 *
-	 */
-	public class AudioHandlers implements IPlayAudio, IAudioListener
-	{
-
-		/**
-		 * 
-		 */
-		@Override
-		public boolean playAudio(File file)
-		{
-			System.out.println("Sound egine has reuest implementation to play audio");
-			try
-			{
-				Media sound = new Media(file.toURI().toString());
-				MediaPlayer player = new MediaPlayer(sound);
-				player.play();
-				return true;
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			
-			return false;
-		}
-
-		/**
-		 * 
-		 */
-		@Override
-		public void onAudioPlayed(long id)
-		{
-			System.out.println("Audio played, ID: " + String.valueOf(id));
-		}
-
-		/**
-		 * 
-		 */
-		@Override
-		public void onAudioCompleted(long id)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
 
 
 
