@@ -18,7 +18,7 @@ import com.botka.data.set.visualization.api.sort.Sort;
 import com.botka.data.set.visualization.api.step.StepOperation;
 import com.botka.data.set.visualization.api.step.StepResult;
 import com.botka.data.set.visualization.api.visualizer.Visualizer;
-import com.botka.data.set.visualization.app.JavaFXMainDriver;
+
 
 /**
  * Can not extend from.

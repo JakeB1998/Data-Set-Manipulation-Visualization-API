@@ -19,7 +19,7 @@ import com.botka.data.set.visualization.api.data.DataSet;
 import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import com.botka.data.set.visualization.api.sound.engine.IAudioListener;
 import com.botka.data.set.visualization.api.sound.engine.IPlayAudio;
-import com.botka.data.set.visualization.app.JavaFXMainDriver;
+
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -123,8 +123,8 @@ public class JavaFXVisualizer extends Visualizer
 			this.setPrefixTitle("");
 		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 		 
-		 JavaFXMainDriver.AUDIO_ENGINE.registerAudioListener(new AudioHandlers());
-		 JavaFXMainDriver.AUDIO_ENGINE.registerPlayAudioListener(new AudioHandlers());
+		 //JavaFXMainDriver.AUDIO_ENGINE.registerAudioListener(new AudioHandlers());
+		 //JavaFXMainDriver.AUDIO_ENGINE.registerPlayAudioListener(new AudioHandlers());
 	
 		this.mReady = this.checkIfReady();
 		if(mReady)
