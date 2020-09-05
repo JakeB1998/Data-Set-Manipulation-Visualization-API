@@ -18,7 +18,7 @@ import com.botka.data.set.visualization.api.sort.Sort;
 import com.botka.data.set.visualization.api.step.StepOperation;
 import com.botka.data.set.visualization.api.step.StepResult;
 import com.botka.data.set.visualization.api.visualizer.Visualizer;
-import com.botka.data.set.visualization.app.JavaFXMainDriver;
+
 
 /**
  * Can not extend from.
@@ -83,8 +83,6 @@ public final class RenderEngine
 	{
 		 // if null then assign default otherwise keep same
 		this.mCyclesPerSecond = this.mCyclesPerSecond == -1 ? DEFAULT_CYCLES_PER_SECOND : this.mCyclesPerSecond;
-		this.startRenderer();
-		
 	}
 	
 	/**

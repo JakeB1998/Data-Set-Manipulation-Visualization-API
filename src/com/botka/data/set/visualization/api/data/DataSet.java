@@ -21,11 +21,13 @@ import java.util.ArrayList;
 public class DataSet<T extends Comparable> extends ArrayList<T>
 {
 
+	private final DataSetHistoryRecorder RECORDER = new DataSetHistoryRecorder();
 	private Object[] mArr;
 	private boolean mNumber;
 	private T mMax;
 	private T mMin;
 	private DataSetPointer mDataSetIteratorInfo;
+	private DataSetHistory mHistory;
 	private int mComparrisons;
 	/**
 	 * Main constructor
@@ -49,16 +51,17 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	/**
 	 * Constructor that accepts an array of data to be comppied into the dynamic arraylist
 	 * @param array with the type of T
+	 * @throws NullPointerException
 	 */
 	public DataSet(T[] arr)
 	{
 		this(arr.length);
-		
 		for (int i = 0; i < arr.length; i++)
 		{
 			super.add(arr[i]);
 		}
 	}
+	
 	
 	/**
 	 * Determines if the entire generic array is type safed with numerical values.
@@ -222,6 +225,20 @@ public class DataSet<T extends Comparable> extends ArrayList<T>
 	public DataSetPointer getPointerInfo()
 	{
 		return this.mDataSetIteratorInfo;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public DataSetHistory getHistory()
+	{
+		return RECORDER.getHistory();
+	}
+	
+	public synchronized void recordDataSet()
+	{
+		RECORDER.addHistroy(this);
 	}
 	
 	/**

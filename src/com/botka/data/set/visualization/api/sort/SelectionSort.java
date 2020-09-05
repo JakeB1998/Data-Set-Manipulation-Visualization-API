@@ -18,25 +18,23 @@ import com.botka.data.set.visualization.api.step.StepResult;
  * @author Jake Botka
  *
  */
-public class SelectionSort extends Sort
-{
+public class SelectionSort extends Sort {
 
 	private int mSubArrayindex; // this is a virtual sub array
 	@SuppressWarnings("rawtypes")
 	private Comparable mCurrentMin;
-	
+
 	/**
 	 * @param sortAlgo
 	 * @param dataset
 	 * @param numberOfSteps
 	 */
-	public SelectionSort( DataSet<?> dataset, IFinishedListener finishedListener)
-	{
+	public SelectionSort(DataSet<?> dataset, IFinishedListener finishedListener) {
 		super("Selection Sort", dataset, -1);
 		super.registerOnFinishedListener(finishedListener);
 		this.mSubArrayindex = -1;
 		this.mCurrentMin = null;
-		
+
 	}
 
 	/**
@@ -44,26 +42,20 @@ public class SelectionSort extends Sort
 	 * @return true if the Sort can take another step, otherwise false.
 	 */
 	@Override
-	public boolean canStep(int currentStep)
-	{
+	public boolean canStep(int currentStep) {
 		DataSet<Comparable> set = (DataSet<Comparable>) super.getDataSet();
-		if (set  != null)
-		{
-			for (int i =0; i < set.size(); i++)
-			{
-				if (i + 1 < set.size())
-				{
-					if (set.get(i).compareTo(set.get(i + 1)) > 0)
-					{
+		if (set != null) {
+			for (int i = 0; i < set.size(); i++) {
+				if (i + 1 < set.size()) {
+					if (set.get(i).compareTo(set.get(i + 1)) > 0) {
 						return true;
 					}
 				}
 			}
-			
+
 			return false;
-			
-		}
-		else
+
+		} else
 			System.err.print(this.getClass().getName() + ": Dataset is null");
 		return currentStep < super.getMaxAmountOfSteps();
 	}
@@ -73,51 +65,45 @@ public class SelectionSort extends Sort
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public SortStep onSortingStep(int stepCount)
-	{
+	public SortStep onSortingStep(int stepCount) {
 		boolean canStep = this.canStep(stepCount);
-		//System.out.println(this.getClass().getName() + ": " + canStep);
-		if (canStep)
-		{
+		// System.out.println(this.getClass().getName() + ": " + canStep);
+		if (canStep) {
 			DataSet<Comparable> set = (DataSet<Comparable>) super.getDataSet();
-			
-			
+
 			int index = set.getPointerInfo().getPointerPosition();
-			//System.out.println(this.getClass().getName() +  ": Sub array " + this.mSubArrayindex);
-			if (index < set.size())
-			{
-				//Sort logic here
-				//find minumum and section off
-				if (index >= this.mSubArrayindex) 
-				{
-					if (this.mCurrentMin != null)
-					{
-						
+			// System.out.println(this.getClass().getName() + ": Sub array " +
+			// this.mSubArrayindex);
+			if (index < set.size()) {
+				// Sort logic here
+				// find minumum and section off
+				if (index >= this.mSubArrayindex) {
+					if (this.mCurrentMin != null) {
+
 						Comparable element = set.get(index);
-						System.out.println(set.parseValue(element) + "," + set.parseValue(this.mCurrentMin));
-						
+						System.out.println(
+								set.parseValue(element) + "," + set.parseValue(this.mCurrentMin));
+
 						if (this.mCurrentMin.compareTo(element) > 0) // found new min
 						{
 							this.mCurrentMin = element;
 							if (this.mSubArrayindex == -1)
 								this.mSubArrayindex = 0; // starts the sub array section
-							
-							set.swap(this.mSubArrayindex, index); //swaps elements
+
+							set.swap(this.mSubArrayindex, index); // swaps elements
 						}
-					}
-					else 
-					{
+					} else {
 						this.mCurrentMin = set.get(index);
 						if (this.mSubArrayindex == -1)
 							this.mSubArrayindex = 0; // starts the sub array section
 						else
 							set.swap(this.mSubArrayindex, index);
 					}
-					
+
 				}
 
 				set.inncrementPosition(); // incremenet index, handles end of array
-				
+
 				if (index + 1 == set.size()) // last element
 				{
 					set.getPointerInfo().setPointerPosition(0);
@@ -125,41 +111,45 @@ public class SelectionSort extends Sort
 					this.mCurrentMin = null;
 				}
 			}
-		
-			//System.out.println(this.getClass().getName() + ": Index = " + index);
+
+			// System.out.println(this.getClass().getName() + ": Index = " + index);
 			set.inncrementComparrisons();
-			
-			
+
 			return new SortStep(index, stepCount++, !canStep);
-		}
-		else
-		{
-			
+		} else {
+
 			super.onFinished();
 		}
-		
-		return new SortStep(super.getDataSet().getPointerInfo().getPointerPosition(), stepCount, true);
-		
-	}
 
+		return new SortStep(super.getDataSet().getPointerInfo().getPointerPosition(), stepCount,
+				true);
+
+	}
 	
 
 	/**
 	 * 
 	 */
 	@Override
-	public StepResult onStep(int step)
-	{
-		return (StepResult)this.onSortingStep(step);
-		
+	public void setDataSet(DataSet<Comparable> dataset) {
+		super.setDataSet(dataset);
+
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Override
-	public void sort()
-	{
+	public StepResult onStep(int step) {
+		return (StepResult) this.onSortingStep(step);
+
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public void sort() {
 		// TODO Auto-generated method stub
 
 	}

@@ -13,36 +13,32 @@ import java.io.File;
 import com.botka.data.set.visualization.api.util.IDGenerator;
 
 /**
- * <insert class description here>
+ * Base class that represents an audio file.
  *
  * @author Jake Botka
  *
  */
-public class AudioFile extends Audio
-{
+public class AudioFile extends Audio {
 	private File mFile;
 
 	/**
-	 * Constructor with the arguents of the path to construct the abstract file object that will connect to the data of the audio file
+	 * Constructor with the arguents of the path to construct the abstract file
+	 * object that will connect to the data of the audio file
+	 * 
 	 * @param the path to the audio file
 	 */
-	public AudioFile(String path)
-	{
+	public AudioFile(String path) {
 		this(new File(path));
 	}
-	
+
 	/**
 	 * 
 	 * @param the File connecting to the audio data.
 	 */
-	public AudioFile(File file)
-	{
-		if (file.exists())
-		{
+	public AudioFile(File file) {
+		if (file.exists()) {
 			this.mFile = file;
-		}
-		else
-		{
+		} else {
 			System.err.print("Audio file can not be found");
 		}
 	}
@@ -51,8 +47,7 @@ public class AudioFile extends Audio
 	 * 
 	 */
 	@Override
-	protected long assignID()
-	{
+	protected long assignID() {
 		return IDGenerator.generateLongID();
 	}
 
@@ -60,16 +55,19 @@ public class AudioFile extends Audio
 	 * @return the audio file
 	 */
 	@Override
-	public File getFile()
-	{
-		if (this.mFile != null)
-		{
-			if (this.mFile.exists())
-			{
+	public File getFile() {
+		if (this.mFile != null) {
+			if (this.mFile.exists()) {
 				return this.mFile;
 			}
 		}
-		
+
+		return null;
+	}
+
+	@Override
+	public byte[] getData() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

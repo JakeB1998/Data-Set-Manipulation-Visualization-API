@@ -1,12 +1,12 @@
 /*
- * File name:  RenderSettings.java
+ * File name:  SwingQuickStart.java
  *
  * Programmer : Jake Botka
  *
- * Date: Jul 30, 2020
+ * Date: Aug 11, 2020
  *
  */
-package com.botka.data.set.visualization.app.settings;
+package com.botka.data.set.visualization.api.implementation.swing;
 
 /**
  * <insert class description here>
@@ -14,13 +14,13 @@ package com.botka.data.set.visualization.app.settings;
  * @author Jake Botka
  *
  */
-public class RenderSettings extends Settings
+public class SwingQuickStart
 {
 
 	/**
 	 * 
 	 */
-	public RenderSettings()
+	public SwingQuickStart()
 	{
 		// TODO Auto-generated constructor stub
 	}

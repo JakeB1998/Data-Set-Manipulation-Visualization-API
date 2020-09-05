@@ -11,28 +11,33 @@ package com.botka.data.set.visualization.api.sound.engine;
 import java.io.File;
 
 /**
- * <insert class description here>
+ * Base class for a singular instance of Audio
  *
  * @author Jake Botka
  *
  */
-public abstract class Audio
-{
+public abstract class Audio {
 
 	private long mID;
+
 	/**
 	 * 
 	 */
-	public Audio()
-	{
-		 this.mID = assignID();
+	public Audio() {
+		this.mID = assignID();
 	}
-	
-	
+
 	protected abstract long assignID();
+
+	public abstract byte[] getData();
+
 	public abstract File getFile();
-	public long getID()
-	{
+
+	/**
+	 * 
+	 * @return
+	 */
+	public long getID() {
 		return this.mID;
 	}
 

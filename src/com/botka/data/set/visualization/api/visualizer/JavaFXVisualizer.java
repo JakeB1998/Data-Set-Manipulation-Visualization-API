@@ -13,10 +13,13 @@ import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import com.botka.data.set.visualization.api.data.DataPeekListener;
 import com.botka.data.set.visualization.api.data.DataSet;
+
+import com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import com.botka.data.set.visualization.api.sound.engine.IAudioListener;
 import com.botka.data.set.visualization.api.sound.engine.IPlayAudio;
-import com.botka.data.set.visualization.app.JavaFXMainDriver;
+
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -51,7 +54,7 @@ public class JavaFXVisualizer extends Visualizer
 	private Canvas mCanvas;
 	private GraphicsContext mContext;
 	private double mGroundX, mGroundY,  mScaleXFactor, mScaleYFactor;
-	private boolean mReady, mStarted;
+	private boolean mReady, mInitialized,mStarted, mRunning, mStopped, mPaused;
 	
 	private final Color DEFAULT_BLOCK_COLOR = Color.GREY;
 	private final Color DEFAULT_BLOCK_STROKE_COLOR = Color.WHITESMOKE;
@@ -62,9 +65,9 @@ public class JavaFXVisualizer extends Visualizer
 	
 	private String mPrefixTitle;
 	private String mTitle;
-	private String mInfoBox1;
-	private String mInfoBox2;
-	private String mInfoBox3;
+	
+	private DataPeekListener mDataPeekListener;
+
 	
 
 	/**
@@ -88,7 +91,7 @@ public class JavaFXVisualizer extends Visualizer
 	{
 		this(dataSet, stage);
 		this.mScene = scene;
-		this.mStage.setScene(this.mScene);
+		
 	}
 	
 
@@ -116,35 +119,16 @@ public class JavaFXVisualizer extends Visualizer
 		this.mGroundX = this.mCanvas != null ? 0 : -1;
 		this.mGroundY = this.mCanvas != null ? (int) this.mCanvas.getHeight() : -1;
 		this.setTitle("JavaFX Implementation Data Set Visuliztion");
-		this.setInfoBox1("");
-		this.setInfoBox2("");
-		this.setInfoBox3("");
 		if (this.mPrefixTitle == null)
 			this.setPrefixTitle("");
 		 Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 		 
-		 JavaFXMainDriver.AUDIO_ENGINE.registerAudioListener(new AudioHandlers());
-		 JavaFXMainDriver.AUDIO_ENGINE.registerPlayAudioListener(new AudioHandlers());
+		 
 	
 		this.mReady = this.checkIfReady();
 		if(mReady)
 		{
-			this.initCanvasSettings();
-			this.mCanvas.setWidth(screenBounds.getWidth());
-			this.mCanvas.setHeight(screenBounds.getHeight() - 100);
-			//this.mStage.setResizable(false);
-			Parent parent = this.mScene.getRoot();
-			if (parent instanceof Group)
-			{
-				Group root = (Group)parent;
-				InfoBox infoBox = new InfoBox();
-				double width = this.mCanvas != null ? this.mCanvas.getWidth() : 0.0;
-				infoBox.setText("I am Jeff");
-				infoBox.setLayoutX(width -  (width * 0.2));
-				infoBox.setLayoutY(100);
-				root.getChildren().add(infoBox);
-				System.out.println("Infobox added");
-			}
+			
 			
 			DataSet<?> set = super.getWorkingDataSet();
 			if(set != null)
@@ -168,8 +152,12 @@ public class JavaFXVisualizer extends Visualizer
 					}
 				}
 			}
-		}	
+		}
+		
+		this.mInitialized = true;
 	}
+	
+	
 	
 	/**
 	 * Inits the canvas settings
@@ -208,27 +196,45 @@ public class JavaFXVisualizer extends Visualizer
 	 */
 	public String checkErrorCode()
 	{
+		String error = "";
 		if (this.mReady)
 		{
 			return "No error";
 		}
 		else
 		{
-			//TODO: Implement error code method
-			return "Method not implemented yet";
+			error += "Error Summary:";
+			error += "\nStage: ";
+			error += this.mStage != null ? "Not null" : "Null";
+			error += "\nScene: ";
+			error += this.mScene != null ? "Not null" : "Null";
+			error += "\nCanvas: ";
+			error += this.mCanvas != null ? "Not null" : "Null";
+			return error;
 		}
 	}
 
-	DecimalFormat df = new DecimalFormat("0.00##");
+	private DecimalFormat df = new DecimalFormat("0.00##");
 	
+	
+	@Override
 	/**
 	 * Overridden from Interface implementation of superclass
 	 * Called on each frame rendered with this framework implementation of JAVAFX front end frame work
 	 */
-	@Override
 	public void onRender()
 	{
-		//System.out.println(Thread.currentThread().getName());
+		this.render(getWorkingDataSet());
+	}
+	
+
+	@Override
+	/**
+	 * 
+	 */
+	public void render(DataSet<? extends Comparable> set)
+	{
+		
 		if (this.mReady)
 		{
 			if (!this.mStarted)
@@ -236,40 +242,7 @@ public class JavaFXVisualizer extends Visualizer
 			
 			if (this.mStage.isShowing())
 			{
-				System.out.println("On rendered");
-				this.clearCanvas();
-			 DataSet<?> set = super.getWorkingDataSet();
-				Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
-				double x = this.mGroundX - this.mScaleXFactor;
-	
-				for (int i =0 ; i < set.size(); i++)
-				{
-					if (iterator.hasNext())
-					{
-						Object o = iterator.next();
-						x = i* this.mScaleXFactor;
-						double y = this.mGroundY;
-						double value = Double.NaN;
-						
-						if (set.isNumber(o))
-						{
-							value = set.parseValue(o);
-							this.setInfoBox1("Value at Pointer: " + String.valueOf(df.format(value)));
-							y-= value * this.mScaleYFactor;
-						}
-						else // if not a number
-							y = i * this.mScaleYFactor;
-					
-						
-						this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
-						this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
-						
-						//TODO: Render text;
-						//this.drawUI();
-						
-					}
-				
-				}
+				this.renderData(set);
 				
 				this.drawPointer(set); // draws the position of the pointer
 				this.handleUI();
@@ -278,8 +251,49 @@ public class JavaFXVisualizer extends Visualizer
 		else
 		{
 			System.err.println(this.getClass().getName() + ": There is a vairbale that is null, Call the check error code method for more information");
+			ConsoleLogger.Logger.log(getClass(), this.checkErrorCode(), true);
 		}
 		
+		
+	}
+	
+	public void renderData(DataSet<? extends Comparable> set)
+	{
+		System.out.println("On rendered");
+		this.clearCanvas();
+		Iterator<?> iterator = set.iterator(); // allows for set modification during iteration
+		double x = this.mGroundX - this.mScaleXFactor;
+
+		for (int i =0 ; i < set.size(); i++)
+		{
+			if (iterator.hasNext())
+			{
+				set.recordDataSet();
+				Object o = iterator.next();
+				x = i* this.mScaleXFactor;
+				double y = this.mGroundY;
+				double value = Double.NaN;
+				
+				if (set.isNumber(o))
+				{
+					value = set.parseValue(o);
+					y-= value * this.mScaleYFactor;
+				}
+				else // if not a number
+					y = i * this.mScaleYFactor;
+				
+				if (this.mDataPeekListener != null)
+					this.mDataPeekListener.onPeak(i ,o);
+			
+				
+				this.drawAt(x,y, this.mScaleXFactor, this.mCanvas.getHeight() - y, DEFAULT_BLOCK_COLOR, null); // draws the specific block to scale with its value
+				this.mContext.strokeRect(x, y, this.mScaleXFactor, this.mCanvas.getHeight() - y); // strokes an outline for block
+				
+				//TODO: Render text;
+				//this.drawUI();
+				
+			}
+		}
 	}
 	/**
 	 * Handles the textual UI
@@ -376,11 +390,10 @@ public class JavaFXVisualizer extends Visualizer
 			int cycles = 0; // current count of cycles
 			double value = Double.NaN; // value to be used to scale the ui elements
 			double a = mScaleXFactor / cyclesPerIndex;
-		    @SuppressWarnings("deprecation")
-			@Override
+		    @Override
 		    public void handle(ActionEvent event) 
 		    {
-		    	if (cycles % cyclesPerIndex == 0 )
+		    	if (cycles % cyclesPerIndex == 0)
 		    	{
 					if (iterator.hasNext())
 					{
@@ -395,7 +408,8 @@ public class JavaFXVisualizer extends Visualizer
 						}
 						else // if not a number
 							y = p * mScaleYFactor;
-		
+						
+						gc.strokeRect(x, y, a, mCanvas.getHeight() - y); // strokes outline
 						set.getPointerInfo().setPointerPosition(p + 1);
 					}
 		    	}
@@ -418,25 +432,43 @@ public class JavaFXVisualizer extends Visualizer
 	@Override
 	public void onStart()
 	{
-		System.out.println("Visualization started");
+		ConsoleLogger.Logger.log(getClass(),"Visualization started", true);
 		this.mStarted = true;
+		this.render(getWorkingDataSet());
+		
 		
 	}
 	
 	@Override
 	public void onPause()
 	{
-		// TODO Auto-generated method stub
+		this.mPaused =  true;
+		this.mRunning = false;
 		
 	}
 
 	@Override
 	public void onStop()
 	{
-		// TODO Auto-generated method stub
-		
+		this.mStopped = true;
+		this.mRunning = false;
+	}
+	
+	@Override
+	public void onResume()
+	{
+		this.mStopped = false;
+		this.mPaused = false;
+		this.mRunning = true;
 	}
 
+	@Override
+	public boolean isRunning()
+	{
+		// TODO Auto-generated method stub
+		return this.mRunning;
+	
+	}
 	@Override
 	public void onFinished()
 	{
@@ -499,6 +531,11 @@ public class JavaFXVisualizer extends Visualizer
 		
 		//TODO : Finish method
 	}
+	
+	public void registerOnDataPeekCallback(DataPeekListener callback)
+	{
+		this.mDataPeekListener = callback;
+	}
 
 	/**
 	 * @return the mScaleXFactor
@@ -522,6 +559,24 @@ public class JavaFXVisualizer extends Visualizer
 	public boolean isReady()
 	{
 		return mReady;
+	}
+	
+	@Override
+	public boolean isInitialized()
+	{
+		return this.mInitialized;
+	}
+
+	@Override
+	public boolean isStopped()
+	{
+		return this.mStopped;
+	}
+
+	@Override
+	public boolean isPaused()
+	{
+		return this.mPaused;
 	}
 
 	/**
@@ -560,53 +615,7 @@ public class JavaFXVisualizer extends Visualizer
 		//this.drawTitle();
 	}
 
-	/**
-	 * @return the mInfoBox1
-	 */
-	public String getInfoBox1()
-	{
-		return mInfoBox1;
-	}
-
-	/**
-	 * @param mInfoBox1 the mInfoBox1 to set
-	 */
-	public void setInfoBox1(String infoBox1)
-	{
-		this.mInfoBox1 = infoBox1;
-	}
-
-	/**
-	 * @return the mInfoBox2
-	 */
-	public String getInfoBox2()
-	{
-		return mInfoBox2;
-	}
-
-	/**
-	 * @param mInfoBox2 the mInfoBox2 to set
-	 */
-	public void setInfoBox2(String infoBox2)
-	{
-		this.mInfoBox2 = infoBox2;
-	}
-
-	/**
-	 * @return the mInfoBox3
-	 */
-	public String getInfoBox3()
-	{
-		return mInfoBox3;
-	}
-
-	/**
-	 * @param mInfoBox3 the mInfoBox3 to set
-	 */
-	public void setInfoBox3(String infoBox3)
-	{
-		this.mInfoBox3 = infoBox3;
-	}
+	
 
 	/**
 	 * @return the mStage
@@ -705,79 +714,15 @@ public class JavaFXVisualizer extends Visualizer
 	}
 	
 	
-	/**
-	 * 
-	 * <insert class description here>
-	 *
-	 * @author Jake Botka
-	 *
-	 */
-	private class InfoBox extends Label
-	{
-		public InfoBox()
-		{
-			super();
-			
-		}
+
+
+
+
+
 	
-		
-	}
-	
-	/**
-	 * 
-	 * <insert class description here>
-	 *
-	 * @author Jake Botka
-	 *
-	 */
-	public class AudioHandlers implements IPlayAudio, IAudioListener
-	{
-
-		/**
-		 * 
-		 */
-		@Override
-		public boolean playAudio(File file)
-		{
-			System.out.println("Sound egine has reuest implementation to play audio");
-			try
-			{
-				Media sound = new Media(file.toURI().toString());
-				MediaPlayer player = new MediaPlayer(sound);
-				player.play();
-				return true;
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			
-			return false;
-		}
-
-		/**
-		 * 
-		 */
-		@Override
-		public void onAudioPlayed(long id)
-		{
-			System.out.println("Audio played, ID: " + String.valueOf(id));
-		}
-
-		/**
-		 * 
-		 */
-		@Override
-		public void onAudioCompleted(long id)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-
-
-
-
 
 }
+
+
+
+
