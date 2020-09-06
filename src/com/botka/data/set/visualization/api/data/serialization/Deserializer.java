@@ -15,67 +15,61 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 /**
- * <insert class description here>
+ * Base class to deserialize data.
  *
  * @author Jake Botka
  *
  */
-public class Deserializer
-{
+public class Deserializer {
 	private static final Deserializer DESERIALIZER = new Deserializer();
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	public static Deserializer getDeserializer()
-	{
+	public static Deserializer getDeserializer() {
 		return DESERIALIZER;
 	}
 
 	/**
 	 * 
 	 */
-	private Deserializer()
-	{
+	private Deserializer() {
 
 	}
-	
+
 	/**
 	 * 
 	 * @param data
 	 * @return
-	 * @throws IOException 
-	 * @throws ClassNotFoundException 
+	 * @throws IOException
+	 * @throws ClassNotFoundException
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T deserialize(byte[] data) throws ClassNotFoundException, IOException
-	{
+	public <T> T deserialize(byte[] data) throws ClassNotFoundException, IOException {
 		Object obj = this.deserailizeObject(data);
 		if (obj != null)
-			return ((T)obj);
-			
-	     return null;
-		
-	
+			return ((T) obj);
+
+		return null;
+
 	}
+
 	/**
 	 * 
 	 * @param data
 	 * @return
-	 * @throws IOException 
-	 * @throws ClassNotFoundException 
+	 * @throws IOException
+	 * @throws ClassNotFoundException
 	 */
-	public Object deserailizeObject(byte[] data) throws IOException, ClassNotFoundException 
-	{
+	public Object deserailizeObject(byte[] data) throws IOException, ClassNotFoundException {
 		ByteArrayInputStream stream = new ByteArrayInputStream(data);
-		if (stream.available() > 0)
-		{
+		if (stream.available() > 0) {
 			ObjectInputStream in = new ObjectInputStream(stream);
 			return in.readObject();
 		}
-			return null;
-	
+		return null;
+
 	}
 
 }

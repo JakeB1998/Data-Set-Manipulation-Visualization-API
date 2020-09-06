@@ -14,33 +14,29 @@ package com.botka.data.set.visualization.api.step;
  * @author Jake Botka
  *
  */
-public class SortStep extends StepResult
-{
+public class SortStep extends StepResult {
 	private int mIndex, mStep;
-	
-	
+
 	/**
 	 * Main constructor
+	 * 
 	 * @param index
 	 * @param step
 	 * @param done
 	 */
-	public SortStep(int index, int step, boolean done)
-	{
-		super(step,done);
+	public SortStep(int index, int step, boolean done) {
+		super(step, done);
 		this.mIndex = index;
 		this.mStep = step;
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return index
 	 */
-	public int getIndex()
-	{
+	public int getIndex() {
 		return this.mIndex;
 	}
-	
 
 }

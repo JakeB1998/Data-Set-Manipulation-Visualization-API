@@ -14,14 +14,12 @@ package com.botka.data.set.visualization.api.implementation.swing;
  * @author Jake Botka
  *
  */
-public class SwingMainDriver
-{
+public class SwingMainDriver {
 
 	/**
 	 * 
 	 */
-	public SwingMainDriver()
-	{
+	public SwingMainDriver() {
 		// TODO Auto-generated constructor stub
 	}
 

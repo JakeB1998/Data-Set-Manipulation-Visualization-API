@@ -19,293 +19,216 @@ import java.util.Scanner;
  * @author Jake Botka
  *
  */
-public class FileReader extends Reader
-{
+public class FileReader extends Reader {
 
 	private File mFile;
-	
+
 	/**
 	 * 
 	 * @param the file to be scanned
 	 * @throws FileNotFoundException
 	 */
-	public FileReader(File file) throws FileNotFoundException
-	{
+	public FileReader(File file) throws FileNotFoundException {
 		super(new Scanner(file));
 		this.mFile = file;
 	}
-	
+
 	/**
 	 * 
 	 * @param path to file
 	 * @throws FileNotFoundException
 	 */
-	public FileReader(String path) throws FileNotFoundException
-	{
+	public FileReader(String path) throws FileNotFoundException {
 		super(new Scanner(new File(path)));
 	}
-	
-	
-	
 
 	/**
 	 * @return string reprensentation of the contents of the file
 	 * @Override
 	 */
 	@Override
-	public String quickRead(Scanner scanner)
-	{
+	public String quickRead(Scanner scanner) {
 		String result = "";
-		while (super.getScanner().hasNext())
-		{
+		while (super.getScanner().hasNext()) {
 			result += super.getScanner().next();
 		}
-		
+
 		return result;
 	}
 
 	@Override
-	public String readEntire()
-	{
-		
+	public String readEntire() {
+
 		return this.quickRead(super.getScanner());
 	}
 
-
-
-
 	@Override
-	public String readString()
-	{
+	public String readString() {
 		return super.getScanner().next();
 	}
 
-
-
-
 	@Override
-	public int readInt()
-	{
+	public int readInt() {
 		return super.getScanner().nextInt();
 	}
 
-
-
-
 	@Override
-	public double readDouble()
-	{
+	public double readDouble() {
 		return super.getScanner().nextDouble();
 	}
 
-
-
-
 	@Override
-	public long readLong()
-	{
+	public long readLong() {
 		return super.getScanner().nextLong();
 	}
 
-
-
-
 	@Override
-	public boolean hasNext()
-	{
+	public boolean hasNext() {
 		// TODO Auto-generated method stub
 		return super.getScanner().hasNext();
 	}
 
-
-
-
 	@Override
-	public boolean hasNextInt()
-	{
+	public boolean hasNextInt() {
 		// TODO Auto-generated method stub
 		return super.getScanner().hasNextInt();
 	}
 
-
-
-
 	@Override
-	public boolean hasNextDouble()
-	{
+	public boolean hasNextDouble() {
 		return super.getScanner().hasNextDouble();
 	}
 
-
-
-
 	@Override
-	public boolean hasNextString()
-	{
-		
+	public boolean hasNextString() {
+
 		return super.getScanner().hasNextLine();
 	}
 
-
-
-
 	@Override
-	public boolean hasNextLong()
-	{
+	public boolean hasNextLong() {
 		return super.getScanner().hasNextLong();
 	}
 
-
-
-
 	@Override
-	public boolean hasNextByte()
-	{
-		
+	public boolean hasNextByte() {
+
 		return super.getScanner().hasNextByte();
 	}
 
 	/**
-	 * Reads all the lines inside of the file
-	 * Does not use a Vector but rather uses a increments growth array that grows when certain lengths are exceeded.
-	 * When reading is completed then the array is s to size.
+	 * Reads all the lines inside of the file Does not use a Vector but rather uses
+	 * a increments growth array that grows when certain lengths are exceeded. When
+	 * reading is completed then the array is s to size.
 	 * 
 	 * @param array of lines read from the file
 	 */
 	@Override
-	public String[] readAllLines()
-	{
+	public String[] readAllLines() {
 		String[] arr = new String[1000];
 		int index = 0;
-		while (this.hasNextLine())
-		{
-			if (index < arr.length)
-			{
+		while (this.hasNextLine()) {
+			if (index < arr.length) {
 				arr[index] = this.readLine();
 				index++;
-			}
-			else
-			{
+			} else {
 				arr = Arrays.copyOf(arr, arr.length * 2);
 			}
-			
+
 		}
-		
+
 		return Arrays.copyOf(arr, index + 1);
 	}
-	
+
 	/**
 	 * Reads next token which is represented as a string
 	 */
-	public String readNext()
-	{
+	public String readNext() {
 		return super.getScanner().next();
 	}
 
 	@Override
-	public String readLine()
-	{
+	public String readLine() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int[] readAllInts()
-	{
+	public int[] readAllInts() {
 		int[] arr = new int[1000];
 		int index = 0;
-		while (this.hasNext())
-		{
-			if (this.hasNextInt())
-			{
-				if (index < arr.length)
-				{
+		while (this.hasNext()) {
+			if (this.hasNextInt()) {
+				if (index < arr.length) {
 					arr[index] = this.readInt();
 					index++;
-				}
-				else
-				{
+				} else {
 					arr = Arrays.copyOf(arr, arr.length * 2);
 				}
-			}
-			else
+			} else
 				this.readNext();
-				
+
 		}
-		
+
 		return Arrays.copyOf(arr, index + 1);
-		
+
 	}
 
 	/**
 	 * @return an array of all doubles in the document
 	 */
 	@Override
-	public double[] readAllDoubles()
-	{
+	public double[] readAllDoubles() {
 		double[] arr = new double[1000];
 		int index = 0;
-		while (this.hasNext())
-		{
-			if (this.hasNextDouble())
-			{
-				if (index < arr.length)
-				{
+		while (this.hasNext()) {
+			if (this.hasNextDouble()) {
+				if (index < arr.length) {
 					arr[index] = this.readDouble();
 					index++;
-				}
-				else
-				{
+				} else {
 					arr = Arrays.copyOf(arr, arr.length * 2);
 				}
-			}
-			else
+			} else
 				this.readNext();
-				
+
 		}
-		
+
 		return Arrays.copyOf(arr, index + 1);
 	}
 
 	@Override
-	public long[] readAllLongs()
-	{
+	public long[] readAllLongs() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public byte readByte()
-	{
+	public byte readByte() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public byte[] readAllBytes()
-	{
+	public byte[] readAllBytes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean hasNextLine()
-	{
+	public boolean hasNextLine() {
 		// TODO Auto-generated method stub
 		return super.getScanner().hasNextLine();
 	}
 
 	@Override
-	public void resetReader()
-	{
-		try
-		{
+	public void resetReader() {
+		try {
 			super.setScanner(new Scanner(this.mFile));
-		} catch (FileNotFoundException e)
-		{
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }

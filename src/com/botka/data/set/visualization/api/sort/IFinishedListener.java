@@ -14,8 +14,7 @@ package com.botka.data.set.visualization.api.sort;
  * @author Jake Botka
  *
  */
-public interface IFinishedListener
-{
+public interface IFinishedListener {
 
 	public void onFinished();
 }
