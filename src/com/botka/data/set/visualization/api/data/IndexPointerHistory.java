@@ -11,38 +11,33 @@ package com.botka.data.set.visualization.api.data;
 import java.util.Stack;
 
 /**
- * <insert class description here>
+ * <History of the index pointer of the dataset.
  *
  * @author Jake Botka
  *
  */
-public class IndexPointerHistory<T> extends Stack<T>
-{
+public class IndexPointerHistory<T> extends Stack<T> {
 
 	private int mMaxBufferSize, mCurrentSize;
-	
-	
+
 	/**
 	 * 
 	 */
-	public IndexPointerHistory(int maxBufferSize)
-	{
+	public IndexPointerHistory(int maxBufferSize) {
 		super();
 		this.mMaxBufferSize = maxBufferSize;
 		this.mCurrentSize = 0;
-		
+
 	}
-	
-	public void addHistory(T element)
-	{
+
+	public void addHistory(T element) {
 		super.add(element);
-		if (this.mCurrentSize < this.mMaxBufferSize)
-		{
+		if (this.mCurrentSize < this.mMaxBufferSize) {
 			this.mCurrentSize++;
 		}
 	}
-	public int currentSizeOfHistory()
-	{
+
+	public int currentSizeOfHistory() {
 		return super.toArray().length;
 	}
 

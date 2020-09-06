@@ -17,47 +17,41 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * <insert class description here>
+ * Base class to serialize data.
  *
  * @author Jake Botka
  *
  */
-public class Serializer
-{
+public class Serializer {
 
 	/**
 	 * 
 	 */
-	public Serializer()
-	{
+	public Serializer() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public <T> byte[] serialize(T  obj)
-	{
-		
-			return this.serailizeObject(obj);
+	public <T> byte[] serialize(T obj) {
+		return this.serailizeObject(obj);
 	}
+
 	/**
 	 * 
 	 * @param data of object
 	 * @return
 	 */
-	public byte[] serailizeObject(Object obj)
-	{
+	public byte[] serailizeObject(Object obj) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try
-		{
+		try {
 			ObjectOutputStream out = new ObjectOutputStream(stream);
 			out.writeObject(obj);
-			 return stream.toByteArray();
-		} catch (IOException e)
-		{
+			return stream.toByteArray();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 

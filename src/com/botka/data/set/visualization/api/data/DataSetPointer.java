@@ -16,34 +16,29 @@ import java.util.Iterator;
  * @author Jake Botka
  *
  */
-public class DataSetPointer
-{
+public class DataSetPointer {
 
 	private int mPointerPosition;
 	private Iterator mItterator;
+
 	/**
 	 * 
 	 */
-	public DataSetPointer()
-	{
+	public DataSetPointer() {
 		this.mPointerPosition = 0;
 		// TODO Auto-generated constructor stub
 	}
-	
-	public synchronized void incrementPosition()
-	{
+
+	public synchronized void incrementPosition() {
 		this.mPointerPosition++;
-		
+
 	}
-		
-	
-	public int getPointerPosition()
-	{
+
+	public int getPointerPosition() {
 		return this.mPointerPosition;
 	}
-	
-	public void setPointerPosition(int position)
-	{
+
+	public void setPointerPosition(int position) {
 		this.mPointerPosition = position;
 	}
 
