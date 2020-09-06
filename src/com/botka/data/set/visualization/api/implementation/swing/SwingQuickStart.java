@@ -14,14 +14,12 @@ package com.botka.data.set.visualization.api.implementation.swing;
  * @author Jake Botka
  *
  */
-public class SwingQuickStart
-{
+public class SwingQuickStart {
 
 	/**
 	 * 
 	 */
-	public SwingQuickStart()
-	{
+	public SwingQuickStart() {
 		// TODO Auto-generated constructor stub
 	}
 

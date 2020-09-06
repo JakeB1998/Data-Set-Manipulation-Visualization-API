@@ -14,10 +14,8 @@ package com.botka.data.set.visualization.api.render.engine;
  * @author Jake Botka
  *
  */
-public interface Render
-{
+public interface Render {
 
 	void onRender();
 
-	
 }
