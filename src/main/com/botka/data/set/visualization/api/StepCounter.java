@@ -7,9 +7,10 @@
 package main.com.botka.data.set.visualization.api;
 
 /**
- * @author jakem
+ * @author Jake Botka
+ * Interface handles data petaining to performance of algorithm.
  *
  */
 public interface StepCounter extends OperationsCounter {
-
+	
 }

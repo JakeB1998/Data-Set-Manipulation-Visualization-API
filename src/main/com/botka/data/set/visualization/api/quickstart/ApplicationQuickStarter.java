@@ -8,6 +8,8 @@
  */
 package main.com.botka.data.set.visualization.api.quickstart;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.util.Random;
 
 import javafx.application.Application;
@@ -39,6 +41,7 @@ public abstract class ApplicationQuickStarter {
 
 	private DataSet<Comparable> mDataset;
 	private StepOperation mDataOperation;
+	private ApplicationWrapper mWrapper;
 	
 	
 	/**
@@ -59,10 +62,10 @@ public abstract class ApplicationQuickStarter {
 	public void startApplication(String[] args) throws ApplicationArgsNotProvided {
 		if (args != null) {
 			if (this.mDataset != null) {
-				new ApplicationWrapper(this.mDataset,this.mDataOperation).execute(args);;
+				this.mWrapper = new ApplicationWrapper(this.mDataset,this.mDataOperation).execute(args);;
 			}
 			else {
-				new ApplicationWrapper(randomizedData(), this.mDataOperation).execute(args);;
+				this.mWrapper = new ApplicationWrapper(randomizedData(), this.mDataOperation).execute(args);;
 			}
 		} else {
 			throw new ApplicationArgsNotProvided();
@@ -83,7 +86,7 @@ public abstract class ApplicationQuickStarter {
 	}
 
 	private static DataSet<Comparable> randomizedData() {
-		DataSet<Comparable> set = new DataSet(0);
+		DataSet<Comparable> set = new DataSet();
 		// insert data here start
 		Random ran = new Random();
 		for (int i = 0; i < 10; i++) {
@@ -93,6 +96,15 @@ public abstract class ApplicationQuickStarter {
 
 		return set;
 		// insert data here end
+	}
+	
+	/**
+	 * 
+	 * @return True if stage is showing otherwise false.
+	 *
+	 */
+	public boolean isShowing() {
+		return this.mWrapper.getStage() != null ? this.mWrapper.getStage().isShowing() : false;
 	}
 
 	/**
@@ -111,6 +123,7 @@ public abstract class ApplicationQuickStarter {
 				.getInstance();
 		private static Visualizer visualizer = null;
 		public static final AudioEngine AUDIO_ENGINE = new AudioEngine();
+		private Stage mStage;
 		private boolean mDoNotRun;
 
 		/**
@@ -134,8 +147,9 @@ public abstract class ApplicationQuickStarter {
 
 		@Override
 		public void start(Stage stage) throws Exception {
-
+			this.mStage = null;
 			try {
+				this.mStage = stage;
 				System.out.println(mDataOperation.toString());
 				Scene scene = null;
 				Canvas canvas = new Canvas(1000, 1000);
@@ -165,10 +179,11 @@ public abstract class ApplicationQuickStarter {
 
 		}
 		
-		public void execute(String[] args) {
+		public ApplicationWrapper execute(String[] args) {
 			if (!this.mDoNotRun) {
 				Application.launch(args);
 			}
+			return this;
 		}
 
 		@Override
@@ -183,6 +198,10 @@ public abstract class ApplicationQuickStarter {
 				visualizer.onFinished();
 			}
 
+		}
+		
+		public Stage getStage() {
+			return this.mStage;
 		}
 
 	}

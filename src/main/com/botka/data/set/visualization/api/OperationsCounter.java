@@ -7,7 +7,8 @@
 package main.com.botka.data.set.visualization.api;
 
 /**
- * @author jakem
+ * @author Jake Botka
+ * Interface that handles data pertaining to recording performance
  *
  */
 public interface OperationsCounter {
