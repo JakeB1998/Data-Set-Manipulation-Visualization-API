@@ -9,38 +9,51 @@
 package main.com.botka.data.set.visualization.api.data;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import main.com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import main.com.botka.data.set.visualization.api.util.Loggable;
 
 /**
- * This will hold coppies of a dataset
+ * This will hold copies of a dataset
  *
  * @author Jake Botka
  *
  */
 public class DataSetHistory implements Loggable {
 
-	private ArrayList<DataSet<?>> mHistroy;
+	private Vector<DataSet<?>> mHistroy;
 	private boolean mLogActions;
 
 	/**
-	 * 
+	 * Constructor.
 	 */
 	public DataSetHistory() {
-		this.mHistroy = new ArrayList(0);
+		this.mHistroy = new Vector(0);
 		this.mLogActions = false;
 
 	}
 
-	public void addHistory(DataSet set) {
+	/**
+	 * Adds dat to histroy. A.K.A the array.
+	 * @param set 
+	 *
+	 */
+	public void addHistory(DataSet<?> dataSet) {
 		if (this.mHistroy != null) {
-			this.mHistroy.add(set);
+			this.mHistroy.add(dataSet);
 			if (this.isLoggingActivity())
 				ConsoleLogger.Logger.log(getClass(), "Data set weas recorded into histroy", true);
 		}
 	}
 
+	/**
+	 * Get a copy in history by index.
+	 * @param index Index of the copy requested.
+	 * @return Copy of dataset at specified index
+	 *
+	 */
 	public DataSet<?> get(int index) {
 		if (this.mHistroy != null) {
 			return this.mHistroy.get(index);
@@ -48,9 +61,25 @@ public class DataSetHistory implements Loggable {
 		return null;
 	}
 
+	/**
+	 * Get entire histroy in array format
+	 * @return Dataset object array
+	 *
+	 */
 	public DataSet[] historyToArray() {
 		if (this.mHistroy != null)
 			return (DataSet[]) this.mHistroy.toArray();
+		return null;
+	}
+	
+	/**
+	 * Get entire histroy in array format
+	 * @return Dataset object array
+	 *
+	 */
+	public List<?> historyToList() {
+		if (this.mHistroy != null)
+			return this.mHistroy;
 		return null;
 	}
 	

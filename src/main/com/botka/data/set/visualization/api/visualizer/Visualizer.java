@@ -26,12 +26,18 @@ public abstract class Visualizer implements Render, LifeCycleCallbackListener {
 	private DataSet<?> mDataset;
 
 	/**
-	 * 
+	 * Constructor.
+	 * @param dataSet The dataset to be visaulzied
 	 */
 	public Visualizer(DataSet<?> dataSet) {
 		this.mDataset = dataSet;
 	}
 
+	/**
+	 * 
+	 * @return The current dataset
+	 *
+	 */
 	public DataSet getWorkingDataSet() {
 		return this.mDataset;
 	}

@@ -24,32 +24,66 @@ public class ExecuteInMainThreadManager {
 
 	private IRunOnMainThread mCallback;
 
+	/**
+	 * 
+	 * @return
+	 *
+	 */
 	public static ExecuteInMainThreadManager getInstance() {
 		return INSTANCE;
 	}
 
+	/**
+	 * 
+	 */
 	private ExecuteInMainThreadManager() {
 		Thread t = new Thread(new AsyncOperation());
 		t.start();
 	}
 
+	/**
+	 * 
+	 * @param runnable
+	 * @return
+	 *
+	 */
 	public boolean addToQuest(Runnable runnable) {
 		QUEUE.add(runnable);
 		return true;
 	}
 
+	/**
+	 * 
+	 * @return
+	 *
+	 */
 	public BlockingQueue<Runnable> getQueue() {
 		return QUEUE;
 	}
 
+	/**
+	 * 
+	 * @param callback
+	 *
+	 */
 	public void setMainThreadCallback(IRunOnMainThread callback) {
 		this.mCallback = callback;
 	}
 
+	/**
+	 * Get the flag that encompases the completion of the asyn task.
+	 * @return Flag of task completion.
+	 *
+	 */
 	public AtomicBoolean getTaskDoneFlag() {
 		return this.mDoneOnUIThread;
 	}
 
+	/**
+	 * Class that encompases async operation
+	 * @author Jake Botka
+	 *
+	 */
 	private class AsyncOperation implements Runnable {
 
 		@Override
