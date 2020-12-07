@@ -24,15 +24,15 @@ public class Deserializer {
 	private static final Deserializer DESERIALIZER = new Deserializer();
 
 	/**
-	 * 
-	 * @return
+	 * Gets singleton instance.
+	 * @return Object Instance.
 	 */
 	public static Deserializer getDeserializer() {
 		return DESERIALIZER;
 	}
 
 	/**
-	 * 
+	 * Default Constructor.
 	 */
 	private Deserializer() {
 
@@ -56,9 +56,9 @@ public class Deserializer {
 	}
 
 	/**
-	 * 
-	 * @param data
-	 * @return
+	 * Deserializes object from byte data.
+	 * @param data Object primitive form.
+	 * @return Deserialized object.
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */

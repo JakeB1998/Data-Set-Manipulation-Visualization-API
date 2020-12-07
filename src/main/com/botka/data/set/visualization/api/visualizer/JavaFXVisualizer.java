@@ -33,7 +33,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.com.botka.data.set.visualization.api.data.DataPeekListener;
 import main.com.botka.data.set.visualization.api.data.DataSet;
-import main.com.botka.data.set.visualization.api.loggers.ConsoleLogger;
+
 import main.com.botka.data.set.visualization.api.sound.engine.IAudioListener;
 import main.com.botka.data.set.visualization.api.sound.engine.IPlayAudio;
 
@@ -228,7 +228,7 @@ public class JavaFXVisualizer extends Visualizer {
 		} else {
 			System.err.println(this.getClass().getName()
 					+ ": There is a vairbale that is null, Call the check error code method for more information");
-			ConsoleLogger.Logger.log(getClass(), this.checkErrorCode(), true);
+			
 		}
 
 	}
@@ -408,7 +408,7 @@ public class JavaFXVisualizer extends Visualizer {
 	 */
 	@Override
 	public void onStart() {
-		ConsoleLogger.Logger.log(getClass(), "Visualization started", true);
+		
 		this.mStarted = true;
 		this.render(getWorkingDataSet());
 

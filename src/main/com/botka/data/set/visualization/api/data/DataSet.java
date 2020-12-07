@@ -10,8 +10,8 @@ package main.com.botka.data.set.visualization.api.data;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import main.com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import main.com.botka.data.set.visualization.api.util.Loggable;
 
 /**
@@ -21,10 +21,9 @@ import main.com.botka.data.set.visualization.api.util.Loggable;
  *
  */
 @SuppressWarnings("rawtypes")
-public class DataSet<T extends Comparable> extends ArrayList<T> implements Loggable {
+public class DataSet<T extends Comparable> extends LinkedList<T> implements Loggable {
 
 	private final DataSetHistoryRecorder RECORDER = new DataSetHistoryRecorder();
-	private Object[] mArr;
 	private boolean mNumber, mLogActivity;
 	private T mMax, mMin;
 	private DataSetPointer mDataSetIteratorInfo;
@@ -37,11 +36,9 @@ public class DataSet<T extends Comparable> extends ArrayList<T> implements Logga
 	 * @param initial size of the dynammic array
 	 */
 	@SuppressWarnings("unchecked")
-	public DataSet(int size) {
+	public DataSet() {
 
-		super(size);
-
-		this.mArr = new Object[size];
+		super();
 		this.mMax = null; // default
 		this.mMin = null; // default
 		this.mNumber = this.isNumberArray();
@@ -57,7 +54,7 @@ public class DataSet<T extends Comparable> extends ArrayList<T> implements Logga
 	 * @throws NullPointerException
 	 */
 	public DataSet(T[] arr) {
-		this(arr.length);
+		this();
 		for (int i = 0; i < arr.length; i++) {
 			super.add(arr[i]);
 		}
@@ -100,31 +97,29 @@ public class DataSet<T extends Comparable> extends ArrayList<T> implements Logga
 	 */
 	public T[] findMaxMin() {
 		Object[] arr = null;
-		if (this.mArr != null) {
-			for (int i = 0; i < super.size(); i++) {
-				T compare = super.get(i);
+		for (int i = 0; i < super.size(); i++) {
+			T compare = super.get(i);
 
-				if (this.mMax == null)
-					this.mMax = compare;
-				else if (compare.compareTo(this.mMax) > 0)
-					this.mMax = compare;
+			if (this.mMax == null)
+				this.mMax = compare;
+			else if (compare.compareTo(this.mMax) > 0)
+				this.mMax = compare;
 
-				if (this.mMin == null)
-					this.mMin = compare;
-				else if (compare.compareTo(this.mMin) < 0)
-					this.mMin = compare;
+			if (this.mMin == null)
+				this.mMin = compare;
+			else if (compare.compareTo(this.mMin) < 0)
+				this.mMin = compare;
 
-			}
-
-			arr = new Object[2];
-			arr[0] = this.mMax;
-			arr[1] = this.mMin;
 		}
+		arr = new Object[2];
+		arr[0] = this.mMax;
+		arr[1] = this.mMin;
 		return (T[]) arr;
 	}
 
 	/**
-	 * @return true if the leement was added to array otherwise false
+	 * Adds data element to dataset. 
+	 * @return true if the element was added to array otherwise false
 	 */
 	@Override
 	public boolean add(T element) {
@@ -165,9 +160,9 @@ public class DataSet<T extends Comparable> extends ArrayList<T> implements Logga
 	}
 
 	/**
-	 * parses value
+	 * parses value from object.
 	 * 
-	 * @param arr
+	 * @param value
 	 * @return
 	 */
 	public double parseValue(Object value) {
@@ -201,9 +196,7 @@ public class DataSet<T extends Comparable> extends ArrayList<T> implements Logga
 						// after included the swapped index shift to the left
 		Object o1 = super.remove(index1);
 		Object o2 = super.remove(index2 - shift); // - 1 due to remove shift);
-		if (this.isLoggingActivity())
-			ConsoleLogger.Logger.log(this.getClass().getName() + "Swaped: " + this.parseValue(o1)
-					+ "," + this.parseValue(02));
+		
 		this.getPointerInfo().setPointerPosition(index1);
 		super.add(index1, (T) o2);
 		this.getPointerInfo().setPointerPosition(index1);
@@ -219,8 +212,8 @@ public class DataSet<T extends Comparable> extends ArrayList<T> implements Logga
 	}
 
 	/**
-	 * 
-	 * @returnHistory of the dataset activity.
+	 * Get the history of operations performed on dataset.
+	 * @return History of the dataset activity.
 	 */
 	public DataSetHistory getHistory() {
 		return RECORDER.getHistory();

@@ -4,8 +4,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
-
 /**
  * 
  * Background thread that manages tasks that are to be called on the main thread
@@ -24,32 +22,68 @@ public class ExecuteInMainThreadManager {
 
 	private IRunOnMainThread mCallback;
 
+	/**
+	 * 
+	 * @return
+	 *
+	 */
 	public static ExecuteInMainThreadManager getInstance() {
 		return INSTANCE;
 	}
 
+	/**
+	 * 
+	 */
 	private ExecuteInMainThreadManager() {
 		Thread t = new Thread(new AsyncOperation());
 		t.start();
 	}
 
+	/**
+	 * 
+	 * @param runnable
+	 * @return
+	 *
+	 */
 	public boolean addToQuest(Runnable runnable) {
 		QUEUE.add(runnable);
 		return true;
 	}
 
+	/**
+	 * 
+	 * @return
+	 *
+	 */
 	public BlockingQueue<Runnable> getQueue() {
 		return QUEUE;
 	}
 
+	/**
+	 * 
+	 * @param callback
+	 *
+	 */
 	public void setMainThreadCallback(IRunOnMainThread callback) {
 		this.mCallback = callback;
 	}
 
+	/**
+	 * Get the flag that encompases the completion of the asyn task.
+	 * 
+	 * @return Flag of task completion.
+	 *
+	 */
 	public AtomicBoolean getTaskDoneFlag() {
 		return this.mDoneOnUIThread;
 	}
 
+	/**
+	 * Class that encompases async operation
+	 * 
+	 * @author Jake Botka
+	 *
+	 */
 	private class AsyncOperation implements Runnable {
 
 		@Override
@@ -70,9 +104,7 @@ public class ExecuteInMainThreadManager {
 							IRunOnMainThread callback = ExecuteInMainThreadManager.this.mCallback;
 							if (callback != null) {
 								callback.runOnMainThread(runnable);
-								while (mDoneOnUIThread.get() == false) // waiting for task to be
-																		// done
-								{
+								while (mDoneOnUIThread.get() == false) {
 
 								}
 								System.out.println("Task finished in UI thread");

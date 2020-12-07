@@ -14,12 +14,12 @@ import java.io.FileNotFoundException;
 import main.com.botka.data.set.visualization.api.readers.FileReader;
 
 /**
- * <insert class description here>
+ * Utility class for DataSet.java
  *
  * @author Jake Botka
  *
  */
-public class DataSetUtils {
+public class DataSetUtil {
 
 	/**
 	 * reads data from file using my FileReader APi reads doubles into dataset
@@ -32,7 +32,7 @@ public class DataSetUtils {
 			FileReader reader = new FileReader(file);
 			DataSet<Double> dataset = null;
 			double[] arr = reader.readAllDoubles();
-			dataset = new DataSet<Double>(0);
+			dataset = new DataSet<Double>();
 			if (arr != null) {
 				for (double d : arr) {
 					dataset.add(new Double(d));
@@ -59,7 +59,7 @@ public class DataSetUtils {
 			FileReader reader = new FileReader(file);
 			DataSet<Integer> dataset = null;
 			int[] arr = reader.readAllInts();
-			dataset = new DataSet<Integer>(0);
+			dataset = new DataSet<Integer>();
 			if (arr != null) {
 				for (int i : arr) {
 					dataset.add(new Integer(i));

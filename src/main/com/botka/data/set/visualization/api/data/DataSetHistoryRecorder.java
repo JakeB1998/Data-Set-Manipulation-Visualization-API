@@ -9,41 +9,36 @@
 package main.com.botka.data.set.visualization.api.data;
 
 /**
- * <insert class description here>
+ * Class records copies of the dataset
  *
  * @author Jake Botka
  *
  */
-public class DataSetHistoryRecorder
-{
+public class DataSetHistoryRecorder {
 
 	private DataSetHistory mHistory;
-	
+
 	/**
 	 * 
 	 */
-	public DataSetHistoryRecorder()
-	{
+	public DataSetHistoryRecorder() {
 		this.mHistory = new DataSetHistory();
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	public DataSetHistory getHistory()
-	{
+	public DataSetHistory getHistory() {
 		return this.mHistory;
 	}
-	
+
 	/**
 	 * 
 	 * @param set
 	 */
-	public void addHistroy(DataSet<?> set)
-	{
-		if (this.mHistory != null)
-		{
+	public void addHistroy(DataSet<?> set) {
+		if (this.mHistory != null) {
 			this.mHistory.addHistory(set);
 		}
 	}
