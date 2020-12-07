@@ -4,8 +4,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
-
 /**
  * 
  * Background thread that manages tasks that are to be called on the main thread
@@ -72,6 +70,7 @@ public class ExecuteInMainThreadManager {
 
 	/**
 	 * Get the flag that encompases the completion of the asyn task.
+	 * 
 	 * @return Flag of task completion.
 	 *
 	 */
@@ -81,6 +80,7 @@ public class ExecuteInMainThreadManager {
 
 	/**
 	 * Class that encompases async operation
+	 * 
 	 * @author Jake Botka
 	 *
 	 */
@@ -104,9 +104,7 @@ public class ExecuteInMainThreadManager {
 							IRunOnMainThread callback = ExecuteInMainThreadManager.this.mCallback;
 							if (callback != null) {
 								callback.runOnMainThread(runnable);
-								while (mDoneOnUIThread.get() == false) // waiting for task to be
-																		// done
-								{
+								while (mDoneOnUIThread.get() == false) {
 
 								}
 								System.out.println("Task finished in UI thread");

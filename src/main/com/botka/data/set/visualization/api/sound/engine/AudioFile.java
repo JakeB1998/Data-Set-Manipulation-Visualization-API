@@ -9,8 +9,11 @@
 package main.com.botka.data.set.visualization.api.sound.engine;
 
 import java.io.File;
+import java.util.Random;
 
-import main.com.botka.data.set.visualization.api.util.IDGenerator;
+import main.org.botka.openjdk.api.addon.security.IDGenerator;
+
+
 
 /**
  * Base class that represents an audio file.
@@ -48,7 +51,7 @@ public class AudioFile extends Audio {
 	 */
 	@Override
 	protected long assignID() {
-		return IDGenerator.generateLongID();
+		return IDGenerator.generateID(new Random().nextInt(), 8);
 	}
 
 	/**
@@ -67,7 +70,7 @@ public class AudioFile extends Audio {
 
 	@Override
 	public byte[] getData() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

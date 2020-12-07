@@ -12,7 +12,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import main.com.botka.data.set.visualization.api.loggers.ConsoleLogger;
 import main.com.botka.data.set.visualization.api.util.Loggable;
 
 /**
@@ -197,9 +196,7 @@ public class DataSet<T extends Comparable> extends LinkedList<T> implements Logg
 						// after included the swapped index shift to the left
 		Object o1 = super.remove(index1);
 		Object o2 = super.remove(index2 - shift); // - 1 due to remove shift);
-		if (this.isLoggingActivity())
-			ConsoleLogger.Logger.log(this.getClass().getName() + "Swaped: " + this.parseValue(o1)
-					+ "," + this.parseValue(02));
+		
 		this.getPointerInfo().setPointerPosition(index1);
 		super.add(index1, (T) o2);
 		this.getPointerInfo().setPointerPosition(index1);

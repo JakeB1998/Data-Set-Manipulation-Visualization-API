@@ -38,7 +38,7 @@ import javafx.stage.Stage;
 import main.com.botka.data.set.visualization.api.ExecuteInMainThreadManager;
 import main.com.botka.data.set.visualization.api.IRunOnMainThread;
 import main.com.botka.data.set.visualization.api.data.DataSet;
-import main.com.botka.data.set.visualization.api.loggers.ConsoleLogger;
+
 import main.com.botka.data.set.visualization.api.readers.FileReader;
 import main.com.botka.data.set.visualization.api.render.engine.RenderEngine;
 import main.com.botka.data.set.visualization.api.sort.ArraySorter;

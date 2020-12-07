@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import main.com.botka.data.set.visualization.api.loggers.ConsoleLogger;
+
 import main.com.botka.data.set.visualization.api.util.Loggable;
 
 /**
@@ -43,8 +43,9 @@ public class DataSetHistory implements Loggable {
 	public void addHistory(DataSet<?> dataSet) {
 		if (this.mHistroy != null) {
 			this.mHistroy.add(dataSet);
-			if (this.isLoggingActivity())
-				ConsoleLogger.Logger.log(getClass(), "Data set weas recorded into histroy", true);
+			if (this.isLoggingActivity()) {
+				//ConsoleLogger.Logger.log(getClass(), "Data set weas recorded into histroy", true);
+			}
 		}
 	}
 
